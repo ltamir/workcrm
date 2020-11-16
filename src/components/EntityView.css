@@ -1,0 +1,26 @@
+.Menu{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	background-color: #2b2b2b;
+	color: #ce9812;
+	border-radius: 10px;
+}
+
+.Menu .active{
+	background-color: #ce9812;
+	color: #2b2b2b;
+}
+
+.Menu a{
+	text-decoration: none;
+	background-color: #2b2b2b;
+	color: #ce9812;
+	font-weight: bold;
+	margin: 2px 5px;
+}
+
+a:hover{
+	background-color: #ce9812;
+	color: #2b2b2b;
+}

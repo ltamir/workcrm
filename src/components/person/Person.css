@@ -1,0 +1,20 @@
+.Person{
+	background-color: #c0bfbf;
+	color: #2b2b2b;
+	border-radius: 10px;
+	margin: 2px;
+	padding: 2px;
+	cursor: pointer;	
+}
+
+.PersonRow{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+}
+
+.Person .PersonType:last-child {
+	margin-right: 2px;
+	margin-left: auto;
+}

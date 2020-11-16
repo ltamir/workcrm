@@ -1,0 +1,32 @@
+.Input{
+	background-color: #e3e3e3;
+	margin: 5px;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	border-radius: 4px;
+}
+
+[contenteditable="true"]:focus {
+	outline: none;
+}
+
+.InputTitle{
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 16px;
+	color: #757575;
+	border-bottom: 1px solid #c4c3c3;
+}
+
+.InputData{
+	font-family: 'Roboto', 'Rubik', 'sans-serif';
+	font-size: 16px;
+	border: none;
+	background-color: #e3e3e3;
+	border-radius: 4px;
+}
+
+.InputData:focus{
+	outline: none;
+	border: none;
+}
+
+

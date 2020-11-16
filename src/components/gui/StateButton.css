@@ -1,0 +1,18 @@
+.StateButton{	
+	display: flex;
+	align-items: center;
+}
+
+.btnDefault{
+	width: 1.5em;
+	background-color: #bdbdbd;
+	cursor: pointer;
+	color: #121212;
+	font-weight: bold;
+	margin: 2px;
+	text-align: center;
+}
+
+.btnDefault .material-icons{
+	font-size: 16px;
+}

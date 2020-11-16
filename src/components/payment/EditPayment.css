@@ -1,0 +1,10 @@
+.EditPayment{
+	margin: 10px 1px;
+	background-color: #e1e1e1;
+}
+
+.EditPaymentRow{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}

@@ -1,0 +1,40 @@
+.Toggle{
+	background-color: #e3e3e3;
+	margin: 2px 5px;
+	padding: 1px;
+	color: #2b2b2b;
+	border-radius: 4px;
+	border-bottom: 1px solid #8b8b8b;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.ToggleOff{
+	box-shadow: 0 4px 8px 8px rgba(0,0,0,0.2) inset;
+}
+
+.ToggleOn{
+	box-shadow: 0 4px 8px 8px rgba(0,0,0,0.2) ;
+} 
+
+.ToggleLabel{
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	color: #686767;
+}
+
+.ToggleData{
+	font-family: 'Roboto', 'Rubik', 'sans-serif';
+	font-size: 16px;
+	background-color: #e3e3e3;
+}
+
+.Toggle:hover{
+	outline: none;
+	border-bottom: 1px solid #000000;
+}
+
+.Toggle .material-icons{
+	font-size: 18px;
+	margin-right: 5px;
+}

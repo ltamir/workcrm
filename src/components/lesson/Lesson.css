@@ -1,0 +1,16 @@
+.Lesson{
+	background-color: #c0bfbf;
+	border-radius: 10px;
+	margin: 5px 1px;
+	padding: 1px;
+}
+
+.LessonRow{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.LessonRow div{
+	margin-right: 15px;
+}

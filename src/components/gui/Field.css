@@ -1,0 +1,33 @@
+.Field{
+	background-color: #e3e3e3;
+	margin: 2px 5px;
+	box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+	padding: 1px;
+	color: #2b2b2b;
+	border-radius: 4px;
+	border-bottom: 1px solid #8b8b8b;
+	font-weight: bold;
+	
+}
+
+.FieldLabel{
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	color: #686767;
+}
+
+.FieldData{
+	font-family: 'Roboto', 'Rubik', 'sans-serif';
+	font-size: 16px;
+	background-color: #e3e3e3;
+}
+
+.Field:hover{
+	outline: none;
+	border-bottom: 1px solid #000000;
+}
+
+.Field .material-icons{
+	font-size: 18px;
+	margin-right: 5px;
+}

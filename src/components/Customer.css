@@ -1,0 +1,12 @@
+.customer{
+	background-color: #2b2b2b;
+	cursor: pointer;
+	margin: 1px;
+}
+.CustomerRow{
+
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	
+}

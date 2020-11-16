@@ -1,0 +1,10 @@
+.EditPerson{
+	margin: 1px;
+	background-color: e1e1e1;
+}
+
+.EditPersonRow{
+	display: flex;
+	justify-content: flex-start;
+}
+

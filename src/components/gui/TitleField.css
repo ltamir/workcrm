@@ -1,0 +1,13 @@
+.TitleField{
+	margin: 1px;
+	margin-bottom: 5px;
+	padding: 2px;
+	color: #f7f7f7;
+	background-color: #383838;
+	border-radius: 7px;
+}
+
+.TitleField span{
+	/* text-decoration: underline; */
+	font-weight: bold;
+}

@@ -1,0 +1,41 @@
+.TextArea{
+	background-color: #e3e3e3;
+	margin: 2px 5px;
+	display: flex;
+	box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+	padding: 1px;
+	color: #2b2b2b;
+	border-radius: 4px;
+	border-bottom: 1px solid #8b8b8b;
+	font-weight: bold;
+}
+
+.TextAreaLabel{
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	margin: 2px;
+	color: #686767;
+}
+
+.TextAreaData{
+	font-family: 'Roboto', 'Rubik', 'sans-serif';
+	font-size: 16px;
+	background-color: #e3e3e3;
+	border: none;
+	border-radius: '7px';
+}
+
+.TextArea:hover{
+	outline: none;
+	border-bottom: 1px solid #000000;
+}
+
+.TextAreaData:focus{
+	outline: none;
+	border: none;
+}
+
+.TextArea .material-icons{
+	font-size: 18px;
+	margin-right: 5px;
+}

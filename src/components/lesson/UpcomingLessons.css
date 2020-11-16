@@ -1,0 +1,14 @@
+.UpcommingLessons{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	background-color: #2b2b2b;
+	color: #ce9812;
+	border-radius: 10px;
+	font-weight: bold;
+}
+
+.UpcommingLessonsRow{
+	display: flex;
+	flex-direction: row;
+}

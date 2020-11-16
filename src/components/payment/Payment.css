@@ -1,0 +1,17 @@
+.Payment{
+	background-color: #c0bfbf;
+	border-radius: 10px;
+	margin: 5px 1px;
+	padding: 1px;
+	cursor: pointer;
+}
+
+.PaymentRow{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.PaymentRow div{
+	margin-right: 15px;
+}
