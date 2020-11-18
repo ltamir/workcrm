@@ -64,7 +64,7 @@ export const updateLesson = (lesson, customerId, navTo, setIsUpdated, touchUpdat
 	saveData('PATCH', 'customers/' + customerId + '/lessons/' + lesson.id, lesson,
 	(lessonId) => {
 		saveData('PATCH', 'persons/' + lesson.person + '/lessons', {[lesson.id]: lesson.charge}, () => {
-			setIsUpdated(true);
+			setIsUpdated(new Date().getTime());
 			console.log('updated', lesson);
 			navTo('lessons');
 		});
