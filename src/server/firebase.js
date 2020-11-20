@@ -72,22 +72,6 @@ export const getEntities = (entity, idToken) => {
 	})	
 }
 
-export const getPersons = (idToken, setter, setIsLoading) => {
-	fetch(`${url}/persons.json?auth=${idToken}`)
-	.then(response => response.json())
-	.then(response => {
-		const arr = [];
-		for (let k in response){
-			if(response[k]){
-				const p = {...response[k], id: k}
-				arr.push(p);
-			}
-		}
-		// console.log(arr);
-		setter([...arr]);
-		setIsLoading(false);
-	});		
-}
 
 export const saveData = async (method, entity, payload, cb, func) => {
 	const idToken = localStorage.getItem('idToken');
