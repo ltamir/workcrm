@@ -44,8 +44,6 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 	}, [getPerson])
 
 	useEffect(() => {
-		console.log('upcominglessons ctor');
-
 
 		async function fetchData () {
 			const theToken = localStorage.getItem('idToken');
@@ -74,21 +72,28 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 		changeStatus(...args)
 	}
 	
+	const filterByDate = (lesson) => {
+		if(showPastUndone === true){
+			return new Date(lesson.startDatetime) < now
+		} else {
+			return new Date(lesson.startDatetime) > now
+		}
+	}
 	return(
 		<div>
 			<div className="UpcommingLessons">NEXT LESSONS</div>
 			<div className="UpcommingLessonsRow">
 				<Toggle 
-					name={['FUTURE LESSONS', 'PAST LESSONS']} 
+					name={['SHOW FUTURE LESSONS', 'SHOW PAST LESSONS']} 
 					title={'Toggle undone past lessons'} 
 					value={showPastUndone}
 					clickHandler={() => setShowPastUndone(prev => !prev)}/>
 			</div>
-		
+		{console.log(lessons.filter(filterByDate))}
 			<div style={{height: '20vh', overflowY:'auto'}}>
 				{!isReady && <Spinner />}
 				{isReady && lessons
-						.filter(l => showPastUndone ===true ? l : new Date(l.startDatetime) > now)
+						.filter(l => showPastUndone === true ? new Date(l.startDatetime) < now : new Date(l.startDatetime) > now)
 						.map(p => <Lesson 
 						key={p.id} 
 						lesson={p} 

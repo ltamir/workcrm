@@ -37,7 +37,7 @@ const EditCustomer = ({customer, customerPersons, navTo, setIsUpdated}) =>{
 			{id, title, chargeRate, commission, isActive, persons, leadingPerson}, 
 			() => {
 				if(customer.isActive !== isActive){
-					for(const [key, val] of Object.entries(customer.persons)){
+					for(const val of Object.values(customer.persons)){
 						const updatedPerson = {id:val, isActive}
 						operations.updatePerson(updatedPerson)
 					};

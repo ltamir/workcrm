@@ -66,7 +66,7 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 			setLesson(location.state.lesson);
 		} 
 		
-	},[match, persons, location])
+	},[match, persons, location, payChannels])
 
 	const savePayment = event => {
 		event.preventDefault();
