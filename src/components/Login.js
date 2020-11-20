@@ -6,6 +6,8 @@ import TitleField from './gui/TitleField';
 import Input from './gui/Input';
 import Button from './gui/Button';
 
+const AuthCtx = React.createContext({isAuth: false});
+
 const Login = () =>{
 	const [email, setEmail] = useState(process.env.REACT_APP_FB_DEFAULT_EMAIL);
 	const [password, setPassword] = useState(process.env.REACT_APP_FB_DEFAULT_PASSWORD);
@@ -72,11 +74,12 @@ const Login = () =>{
 
 	useEffect( () => {
 		authStatus();
-	}, [isAuth])
+	}, [isAuth, authStatus])
 
 
 	return(
 		<span>
+			<AuthCtx.Provider value={{isAuth: isAuth}}>
 			{isAuth && <WorkCrm isAuthed={true} logoutTime={logoutTime}/>}
 			{!isAuth && <div style={{margin: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
 				<div style={{width: '50%', margin: '10px'}}>
@@ -89,6 +92,8 @@ const Login = () =>{
 						<Button label="AUTHENTICATE" onClick={login}/>
 					</div>
 				</div>}
+			</AuthCtx.Provider>
+
 		</span>
 	)
 }
