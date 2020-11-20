@@ -58,7 +58,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					alert('missing leading  person ' + customer.title);
 				customer.id = match.params.customerId;
 				setCustomer(customer);
-				console.log("EntityView CTOR", customer);
+				// console.log("EntityView CTOR", customer);
 				const presons = [];
 				const pArr = [];
 				for(let p in customer.persons){
