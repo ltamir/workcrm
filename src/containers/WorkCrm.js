@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {NavLink, Route, useHistory} from 'react-router-dom';
-import {getPersons, getEntities} from '../server/firebase'
+import {getEntities} from '../server/firebase'
 import * as entityOperations from '../server/EntityOperations';
 import * as utils from '../components/gui/utils'
 import './WorkCrm.css'
@@ -31,7 +31,19 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 	const allPersons = () => {
 		const theToken = localStorage.getItem('idToken');
 		setIsLoading(true);
-		getPersons(theToken, setSearchResults, setIsLoading);
+		
+		getEntities('persons', theToken)			
+		.then( persons => {
+			console.log(persons);
+			const arr = [];
+			for (let k in persons){
+				if(persons[k]){
+					arr.push({...persons[k], id: k});
+				}
+			}
+			setSearchResults([...arr])
+			setIsLoading(false);
+		})
 	}
 
 	const searchInputHandler = event => {
@@ -115,7 +127,7 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 						p => {
 							switch(activeState){
 								case 1:
-									return p.isActive? p : null;
+									return p.isActive && p.personType == 0? p : null;
 								case 0:
 									return !p.isActive? p : null;
 								case -1:
