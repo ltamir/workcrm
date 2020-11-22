@@ -12,11 +12,12 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 	const [isReady, setIsReady] = useState(false);
 	const [showPastUndone, setShowPastUndone] = useState(false);
 
-	const getPerson = useCallback((token, pos, lessonsArr) => {
+	const getPerson = useCallback( (token, pos, lessonsArr) => {
 		const personId = lessonsArr[pos].person
 		getEntity('persons', token, personId + '/fullname')
 			.then(fullname => {
 				lessonsArr[pos].fullname = fullname;
+				
 				if(pos < lessonsArr.length-1){
 					getPerson(token, pos + 1, lessonsArr)
 				} else {
@@ -27,7 +28,7 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 			})
 	}, [])
 
-	const fetchLessons = useCallback((token, keys, lessonsArr) => {
+	const fetchLessons = useCallback( (token, keys, lessonsArr) => {
 		const pair = keys.pop()
 		getEntity('customers', token, pair.customerId + '/lessons/' + pair.lessonId)
 		.then(lesson => {
@@ -73,10 +74,11 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 	}
 	
 	const filterByDate = (lesson) => {
+		const date = lesson.startDatetime.split(' ')[0];
 		if(showPastUndone === true){
-			return new Date(lesson.startDatetime) < now
+			return new Date(date) < now
 		} else {
-			return new Date(lesson.startDatetime) > now
+			return new Date(date) > now
 		}
 	}
 	return(
@@ -89,11 +91,10 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 					value={showPastUndone}
 					clickHandler={() => setShowPastUndone(prev => !prev)}/>
 			</div>
-		{console.log(lessons.filter(filterByDate))}
 			<div style={{height: '20vh', overflowY:'auto'}}>
 				{!isReady && <Spinner />}
 				{isReady && lessons
-						.filter(l => showPastUndone === true ? new Date(l.startDatetime) < now : new Date(l.startDatetime) > now)
+						.filter(filterByDate)
 						.map(p => <Lesson 
 						key={p.id} 
 						lesson={p} 
