@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {NavLink, Route, useHistory} from 'react-router-dom';
-import {getEntities} from '../server/firebase'
+import {getEntities, getEntitiesWithFilter} from '../server/firebase'
 import * as entityOperations from '../server/EntityOperations';
 import * as utils from '../components/gui/utils'
 import './WorkCrm.css'
@@ -17,6 +17,8 @@ import UpcomingLessons from '../components/lesson/UpcomingLessons';
 const WorkCrm = ({isAuthed, logoutTime}) => {
 	const [searchCustPerson, setSearchCustPerson] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
+	// const [persons, setPersons] = useState([]);
+	// const [customers, setCustomers] = useState([]);
 	const [activeState, setActiveState] = useState(1);
 	const [isLoading, setIsLoading] = useState(true);
 	
@@ -32,16 +34,30 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 		const theToken = localStorage.getItem('idToken');
 		setIsLoading(true);
 		
+		const filter = `orderBy="isActive"&startAfter=true`
 		getEntities('persons', theToken)			
 		.then( persons => {
-			console.log(persons);
-			const arr = [];
+			const personArr = [];
 			for (let k in persons){
 				if(persons[k]){
-					arr.push({...persons[k], id: k});
+					personArr.push({...persons[k], id: k});
 				}
 			}
-			setSearchResults([...arr])
+			// getEntitiesWithFilter('customers', theToken, filter)
+			// .then(customers => {
+
+			// 	const customersArr = [];
+			// 	for (let k in customers){
+			// 		if(customers[k]){
+			// 			customersArr.push({...customers[k], id: k});
+			// 		}
+			// 	}
+			// 	setPersons([...personArr])
+			// 	setCustomers([...customersArr])
+
+			// 	console.log(customers);
+			// })
+			setSearchResults([...personArr])
 			setIsLoading(false);
 		})
 	}
@@ -82,7 +98,6 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 
 			getEntities('reference', theToken)			
 			.then( reference => {
-				console.log(reference);
 				setReference(reference)
 				allPersons(theToken);
 			})
@@ -127,7 +142,7 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 						p => {
 							switch(activeState){
 								case 1:
-									return p.isActive && p.personType == 0? p : null;
+									return p.isActive && p.personType === 0? p : null;
 								case 0:
 									return !p.isActive? p : null;
 								case -1:
