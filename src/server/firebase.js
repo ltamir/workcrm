@@ -68,6 +68,18 @@ export const getEntities = (entity, idToken) => {
 		return response.json()
 	})
 	.catch(err => {
+		console.log(err.json());
+	})	
+}
+
+export const getEntitiesWithFilter = (entity, idToken, filter) => {
+	return fetch(`${url}/${entity}.json?${filter}&auth=${idToken}`)
+	.then(response => {
+		if(response.status > 200)
+			console.log(response);
+		return response.json()
+	})
+	.catch(err => {
 		console.log(err);
 	})	
 }
