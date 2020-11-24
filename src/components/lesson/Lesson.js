@@ -21,13 +21,15 @@ const Lesson = ({lesson, clickHandler, changeStatus, showPayment, editLesson, na
 		changeStatus(lesson.id, lesson.customerId, lesson.isDone, true)
 	}
 
+	const LinkToCust = (props) => !showPayment ? <a href={`/workcrm/customers/${lesson.customerId}`} title="View Customer">{props.children}</a> : <span>{props.children}</span>
 	return(
 	<div 
 		className="Lesson" 
 		onClick={clickHandler?clickHandler:null} 
 		title="Double click to edit Lesson">
 		<div className="LessonRow">
-			{lesson.fullname && <TitleField value={lesson.fullname} />}
+			<LinkToCust>{lesson.fullname && <TitleField value={lesson.fullname} /> }</LinkToCust>
+			
 			{lesson.title && <Field name="Title" value={lesson.title} setDir={true}/>}
 			<Field name="Date" value={utils.toIsrDate(lesson.startDatetime)} />
 			<Field name="Charge" value={lesson.charge} />

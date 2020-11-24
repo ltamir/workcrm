@@ -14,3 +14,7 @@
 .LessonRow div{
 	margin-right: 15px;
 }
+
+.LessonRow a:hover{
+	background-color: unset;
+}
