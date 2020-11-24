@@ -95,7 +95,7 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 					value={type} 
 					onChange={e => setType(e.target.value)} />
 					<Button label="SAVE" onClick={savePerson}/>
-				</div>Manager
+				</div>
 				<div className="EditPersonRow">
 					<TextArea 
 						label="Notes"
