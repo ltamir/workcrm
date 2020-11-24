@@ -75,7 +75,6 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 	
 	const filterByDate = (lesson) => {
 		const date = lesson.startDatetime.split(' ')[0] + "T23:59:00";
-		console.log(new Date(date), now);
 		if(showPastUndone === true){
 			return new Date(date) < now
 		} else {
