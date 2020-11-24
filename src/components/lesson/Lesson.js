@@ -35,7 +35,7 @@ const Lesson = ({lesson, clickHandler, changeStatus, showPayment, editLesson, na
 
 			{showPayment && <div style={{marginLeft: 'auto'}}>
 				<Button 
-					label={lesson.payment === -1 ? 'Create Payment' : 'View Payment'} 
+					label={lesson.payment === -1 ? 'Create Payment' : 'Edit Payment'} 
 					title={lesson.payment === -1 ? 'Click to create a Payment' : 'Click to view the Payment'} 
 					onClick={paymentNavHandler}/>			
 			</div>}
