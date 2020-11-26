@@ -17,4 +17,10 @@
 
 .LessonRow a:hover{
 	background-color: unset;
+	text-decoration: none;
+}
+
+.LessonRow a{
+	background-color: unset;
+	text-decoration: none;
 }

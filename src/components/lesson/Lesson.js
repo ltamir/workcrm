@@ -3,6 +3,7 @@ import Field from '../gui/Field';
 import TitleField from '../gui/TitleField';
 import Button from '../gui/Button';
 import NotesField from '../gui/NotesField';
+import {Link} from 'react-router-dom'
 import * as utils from '../gui/utils';
 
 import './Lesson.css'
@@ -21,7 +22,7 @@ const Lesson = ({lesson, clickHandler, changeStatus, showPayment, editLesson, na
 		changeStatus(lesson.id, lesson.customerId, lesson.isDone, true)
 	}
 
-	const LinkToCust = (props) => !showPayment ? <a href={`/workcrm/customers/${lesson.customerId}`} title="View Customer">{props.children}</a> : <span>{props.children}</span>
+	const LinkToCust = (props) => !showPayment ? <Link to={`/workcrm/customers/${lesson.customerId}`} title="View Customer">{props.children}</Link> : <span>{props.children}</span>
 	return(
 	<div 
 		className="Lesson" 
