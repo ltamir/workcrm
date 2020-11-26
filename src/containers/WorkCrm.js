@@ -110,11 +110,14 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 	return(
 		<div className="WorkCrm">
 			<div className="WorkCrmMenu">
-				<div title="logout time">
-					<span style={{backgroundColor: '#cacaca', marginRight: '1px'}}>{utils.toIsrDate(new Date(logoutTime + (7200*1000)).toISOString())}</span>
-					<span className="material-icons" style={{verticalAlign: 'super',paddingLeft: '1px', marginRight: '10px', fontSize: '12px', backgroundColor: '#fafafa'}}>{isAuthed? 'lock_open' : 'lock'}</span>
+				<div>
+					<span 
+						className="material-icons" 
+						style={{verticalAlign: 'super',paddingLeft: '1px', fontSize: '12px', backgroundColor: '#fafafa'}}
+						title={"logout time " + utils.toIsrDate(new Date(logoutTime + (7200*1000)).toISOString())}>
+							{isAuthed? 'lock_open' : 'lock'}
+					</span>
 				</div>
-				<span></span>
 				<span className="WorkCrmMenu">
 					<NavLink to="/workcrm/upcominglessons">UPCOMING LESSONS</NavLink>
 					<NavLink to="/workcrm/persons">ADD PERSON</NavLink>
@@ -134,7 +137,8 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 					<Button icon="cached" title="Refresh" shadow="2px 4px 8px 0 #696969" onClick={allPersons}/>
 					<Button icon="search_off" title="Clear search" shadow="2px 4px 8px 0 #696969" onClick={clearSearch}/>
 				</span>
-			</div>			
+			</div>
+
 			<div style={{height: '40vh', overflowY: 'auto'}}>
 				{isLoading && <Spinner />}
 				{!isLoading && <Persons 
