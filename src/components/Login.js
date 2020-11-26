@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, {useState, useEffect, useCallback, useRef, useContext} from 'react';
 import WorkCrm from '../containers/WorkCrm';
 import {signIn} from '../server/firebase';
 import {useHistory} from 'react-router-dom';
@@ -80,7 +80,9 @@ const Login = () =>{
 	return(
 		<span>
 			<AuthCtx.Provider value={{isAuth: isAuth}}>
-			{isAuth && <WorkCrm isAuthed={true} logoutTime={logoutTime}/>}
+			<AuthHoc>
+				{<WorkCrm isAuthed={true} logoutTime={logoutTime}/>}
+			</AuthHoc>
 			{!isAuth && <div style={{margin: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
 				<div style={{width: '50%', margin: '10px'}}>
 						<Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
@@ -98,4 +100,8 @@ const Login = () =>{
 	)
 }
 
+const AuthHoc = (props) => {
+	const ctx = useContext(AuthCtx);
+	return ctx.isAuth && props.children
+}
 export default Login;
