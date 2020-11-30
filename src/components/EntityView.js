@@ -178,6 +178,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					location={props.location}
 					customerId={customer.id}
 					persons={persons}
+					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={insertLessonHandler}
 					/>} exact/>	
@@ -187,6 +188,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					location={props.location}
 					navTo={navigateBack}
 					persons={persons}
+					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={updateLessonHandler}
 					/>} exact/>	

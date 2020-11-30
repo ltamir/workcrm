@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {getEntities} from '../../server/firebase'
+import {getEntities, getEntity} from '../../server/firebase'
 import Input from '../gui/Input';
 import TextArea from '../gui/TextArea';
 import Select from '../gui/Select';
 import Button from '../gui/Button';
+import Spinner from '../gui/Spinner';
 import './EditLesson.css'
 
 
 
-const EditLesson = ({match, location, persons, onSaveLesson, setIsUpdated, navTo}) =>{
+const EditLesson = ({match, location, persons, paymentIds, onSaveLesson, setIsUpdated, navTo}) =>{
 	const [title, SetTitle] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [startTime, setStartTime] = useState('');
@@ -21,6 +22,8 @@ const EditLesson = ({match, location, persons, onSaveLesson, setIsUpdated, navTo
 	const [subjects, setSubjects] = useState(0);
 	const [id, setId] = useState(-1);
 
+	const [payments, setPayments] = useState([{id: -2, name: 'Load payment'}]);
+	const [isLoading, setIsLoading] = useState(false);
 	const [availableSubjects, setAvailableSubjects] = useState([]);
 
 
@@ -37,6 +40,45 @@ const EditLesson = ({match, location, persons, onSaveLesson, setIsUpdated, navTo
 		setSubjects(lesson.subjects);
 		setId(lesson.id);
 	}
+
+	// **** retrieve payments:
+	const fetchPayments = (theToken, keys, paymentsArr) => {
+		getEntity('payments', theToken, keys[0])
+		.then(payment => {
+			const p = {};
+			p.id = keys[0];
+			p.name = `${payment.datetime} ${payment.amount}`
+			paymentsArr.push(p)
+			keys.shift();
+			if(keys.length === 0){
+				paymentsArr.sort( (a, b) => a.datetime < b.datetime ? 1 : -1)
+				setPayments([{id: -1, name: 'Select payment'}, ...paymentsArr]);
+				setPayment(-2)
+				setIsLoading(false);
+				return;
+			}
+			fetchPayments(theToken, keys, paymentsArr);
+		})
+	}
+
+	const buildPayments = () => {
+		if(payment !== -1){
+			return
+		}
+
+		if(paymentIds){
+			setIsLoading(true)
+			const theToken = localStorage.getItem('idToken');
+			const keys = [];
+			const paymentsArr = [];
+			for(let p in paymentIds){
+				keys.push(p)
+			}
+			
+			fetchPayments(theToken, keys, paymentsArr)	
+		} 
+}
+
 
 	useEffect(() => {
 		const theToken = localStorage.getItem('idToken');
@@ -119,9 +161,17 @@ const EditLesson = ({match, location, persons, onSaveLesson, setIsUpdated, navTo
 						type="checkbox" 
 						checked={isDone} 
 						value={isDone} 
-						onChange={e => setIsDone(e.target.checked)}/>	
+						onChange={e => setIsDone(e.target.checked)}/>							
 				</div>
 				<div className="EditLessonRow">
+					{isLoading && <Spinner sm/>}
+					{payment !== -1 && payment !== -2 ? payment : 
+					!isLoading && <Select 
+						label="Set payment" 
+						value={payment} 
+						onClick={buildPayments}
+						onChange={e => setPayment(e.target.value)}
+						optionsArr={payments.map(p => { return {id: p.id, name: p.name}})}/>}						
 					<TextArea label="Notes" cols="80" value={notes} onChange={e => setNotes(e.target.value)}/>
 					<Button label="SAVE" onClick={saveLesson}/>
 				</div>
