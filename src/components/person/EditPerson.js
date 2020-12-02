@@ -100,6 +100,7 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 					<TextArea 
 						label="Notes"
 						cols="80"
+						rows="4"
 						value={notes}
 						onChange={e => setNotes(e.target.value)}
 						title="Notes"
@@ -109,13 +110,15 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 					{id !== -1 && customer === -1 && <Button label={'ACTIVATE'} onClick={createCustomer} style={{float: 'right'}}/>}
 				</div>
 
-				{id !== -1 && <div style={{boxShadow: '0 2px 4px 2px #2b2b2b'}}><div className="EditPersonRow" >
-					<LogEntries personId={id} hasUpdated={hasUpdated} />
-				</div>				
-				<hr/>
-				<div className="EditPersonRow">
-					<EditlogEntry personId={id} navTo={navTo} setHasUpdated={setHasUpdated}/>
-				</div></div>}
+				{id !== -1 && <div style={{boxShadow: '0 2px 4px 2px #2b2b2b'}}>
+					<div className="EditPersonRow" >
+						<LogEntries personId={id} hasUpdated={hasUpdated} />
+					</div>				
+					<hr/>
+					<div className="EditPersonRow">
+						<EditlogEntry personId={id} navTo={navTo} setHasUpdated={setHasUpdated}/>
+					</div>
+				</div>}
 		</div>
 	)
 

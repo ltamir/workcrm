@@ -25,6 +25,7 @@ const EditlogEntry = ({personId, navTo, setHasUpdated}) =>{
 			<TextArea 
 				label="Entry" 
 				cols="80" 
+				rows="3"
 				value={entry} 
 				onChange={event => setEntry(event.target.value)} />
 			

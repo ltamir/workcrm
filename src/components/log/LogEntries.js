@@ -26,7 +26,7 @@ const LogEntries = ({personId, hasUpdated}) =>{
 
 
 	const getStyle = (rows) => {
-		const height = rows < 2 ? `${rows * 5}vh` : '12vh';
+		const height = rows < 2 ? `${rows * 8}vh` : '12vh';
 		return {width: '100%', height, overflowY:'auto'}
 	}
 	return(
