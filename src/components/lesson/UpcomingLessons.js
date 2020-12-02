@@ -3,6 +3,7 @@ import {getEntities, getEntity} from '../../server/firebase';
 import Lesson from './Lesson';
 import Spinner from '../gui/Spinner';
 import Toggle from '../gui/Toggle';
+import Hoc from '../gui/Hoc';
 import './UpcomingLessons.css'
 
 const now = new Date();
@@ -91,7 +92,7 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 					value={showPastUndone}
 					clickHandler={() => setShowPastUndone(prev => !prev)}/>
 			</div>
-			<div style={{height: '20vh', overflowY:'auto'}}>
+			<Hoc height='40vh' overflowY='auto'>
 				{!isReady && <Spinner />}
 				{isReady && lessons
 						.filter(filterByDate)
@@ -105,7 +106,7 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 						doubleClickHandler={doubleClickHandler}
 						/>)
 					}	
-			</div>	
+			</Hoc>	
 		</div>	
 	)
 }
