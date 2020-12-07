@@ -14,7 +14,7 @@ export const signIn = async (email, password, logout) => {
 		headers:{'Content-Type': 'application/json'},
 		body: JSON.stringify(payLoad)
 	})
-	.then(response => {
+	.then(response => { 
 		if(!response.ok){
 			console.log(response);
 		}
@@ -57,7 +57,7 @@ export const getPerson = (idToken, id) => {
 
 export const getEntity = (entity, idToken, id) => {
 	return fetch(`${url}/${entity}/${id}.json?auth=${idToken}`)
-	.then(response => response.json())		
+	.then(response => response.json())	
 }
 
 export const getEntities = (entity, idToken) => {

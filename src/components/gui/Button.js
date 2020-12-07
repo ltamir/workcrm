@@ -1,7 +1,7 @@
 import React from 'react';
 import './Button.css'
 
-const Button = ({label, icon, title, type, bg, shadow, style, onClick}) => (
+const Button = ({label, icon, title, type, bg, shadow, style, onClick, children}) => (
 	<div className="Button" style={style? style : null}>
 		<button 
 			title={title? title : label}
@@ -10,6 +10,7 @@ const Button = ({label, icon, title, type, bg, shadow, style, onClick}) => (
 			type={type? type : 'button'}
 			onClick={onClick? onClick : null}
 			>{label}{icon && <span className="material-icons">{icon}</span>}
+			{children}
 		</button>
 	</div>
 );

@@ -99,6 +99,54 @@ export const markLessonDone = (lesson) =>{
 	})
 }
 
+// ***** Work Handling ***** //
+export const insertWork = (lesson, customerId, navTo, setIsUpdated, touchUpdatedLessons) => {
+	saveData('POST', 'customers/' + customerId + '/works/', lesson, 
+		(lessonId) => {
+			saveData('PATCH', 'persons/' + lesson.person + '/works', {[lessonId]: lesson.charge}, () => {
+				setIsUpdated(true);
+				lesson.id = lessonId;
+				updateWorkStatus(lesson.id, customerId, touchUpdatedLessons);			
+				console.log('inserted', lesson);
+				navTo('works');
+			})
+		}
+	);
+}
+
+export const updateWork = (lesson, customerId, navTo, setIsUpdated, touchUpdatedLessons) => {
+	saveData('PATCH', 'customers/' + customerId + '/works/' + lesson.id, lesson,
+	(lessonId) => {
+		saveData('PATCH', 'persons/' + lesson.person + '/works', {[lesson.id]: lesson.charge}, () => {
+			setIsUpdated(new Date().getTime());
+			console.log('updated', lesson);
+			navTo('works');
+		});
+
+		updateWorkStatus(lesson.id, customerId, touchUpdatedLessons, false);		
+	});
+}
+
+export const updateWorkStatus = (lessonId, customerId, status, updateLesson) => {
+	console.log(lessonId, customerId, status, updateLesson);
+
+	if(status !== null){
+		if(status){
+			saveData('PATCH', 'upcomingWorks', {[lessonId]: customerId}, null, () => {
+				console.log('updated work status to ', status);
+				if(updateLesson && updateLesson === true)
+					saveData('PATCH', 'customers/' + customerId + '/lessons/' + lessonId, {'isDone': false})
+			})
+		} else {
+			saveData('DELETE', 'upcomingWorks/' + lessonId, null, null, () => {
+				console.log('updated work status to ', status);
+				if(updateLesson && updateLesson === true)
+					saveData('PATCH', 'customers/' + customerId + '/lessons/' + lessonId , {'isDone': true})
+			} )
+		}
+	}
+}
+
 
 // ***** Payment Handling ***** //
 export const insertPayment = (payment, navTo, setIsUpdated) => {

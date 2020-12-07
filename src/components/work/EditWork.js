@@ -5,13 +5,11 @@ import TextArea from '../gui/TextArea';
 import Select from '../gui/Select';
 import Button from '../gui/Button';
 import Spinner from '../gui/Spinner';
-import './EditLesson.css'
+import './EditWork.css'
 
 
 
-const EditLesson = (props) =>{
-	const {match, location, persons, paymentIds, onSaveLesson, setIsUpdated, navTo} = props;
-	
+const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdated, navTo}) =>{
 	const [title, SetTitle] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [startTime, setStartTime] = useState('');
@@ -92,29 +90,29 @@ const EditLesson = (props) =>{
 			}
 			setAvailableSubjects([...arr])
 				
-			if(location && location.state.lesson){
-				console.log("EditLesson CTOR");
-				setLesson(location.state.lesson);
+			if(work){
+				console.log("EditLesson CTOR", work);
+				setLesson(work);
 			} else {
 				const now = new Date().toISOString().replace('T', ' ').substr(0, 16)
-				const lesson = {id: -1, title: '', startDatetime: now, 
+				const work = {id: -1, title: '', startDatetime: now, 
 					duration: 1, person: persons[0].id, isDone: false, charge: 0.00, payment: -1, 
 					subjects: arr[0].id, notes: ''}	
-				setLesson(lesson);
+				setLesson(work);
 			}
 		})
 
-	}, [match, location, persons])
+	}, [work, location, persons])
 
 
 	const saveLesson = () => {
-		const touchUpdatedLessons = id !== -1 && location.state.lesson.isDone !== isDone ? !isDone : id === -1 ? true : null;
-		onSaveLesson({id, title, startDatetime: startDate + " " + startTime, duration, person, isDone, charge, payment, subjects, notes}, navTo, setIsUpdated, touchUpdatedLessons)
+		const touchUpdatedLessons = id !== -1 && work.isDone !== isDone ? !isDone : id === -1 ? true : null;
+		const saveFunc = work ? onSaveLesson.u : onSaveLesson.c;
+		saveFunc({id, title, startDatetime: startDate + " " + startTime, duration, person, isDone, charge, payment, subjects, notes}, navTo, setIsUpdated, touchUpdatedLessons)
 	}
 
 	return(
 		<div className="EditLesson">
-			{props.type && <h4>WORK</h4>}
 			<form>
 				<div className="EditLessonRow">
 					<Input 
@@ -185,4 +183,4 @@ const EditLesson = (props) =>{
 
 }
 
-export default EditLesson;
+export default EditWork;

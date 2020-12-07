@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {getEntities, getEntity} from '../../server/firebase';
-import Lesson from './Lesson';
+import Work from './Work';
 import Spinner from '../gui/Spinner';
 import Toggle from '../gui/Toggle';
 import Hoc from '../gui/Hoc';
-import './UpcomingLessons.css'
+import './UpcomingWorks.css'
 
 const now = new Date();
 
-const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHandler, navToPayment}) =>{
+const UpcomingWorks = ({clickHandler, editLesson, changeStatus, doubleClickHandler, navToPayment}) =>{
 	const [lessons, setLessons] = useState([]);
 	const [isReady, setIsReady] = useState(false);
 	const [showPastUndone, setShowPastUndone] = useState(false);
@@ -31,8 +31,9 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 
 	const fetchLessons = useCallback( (token, keys, lessonsArr) => {
 		const pair = keys.pop()
-		getEntity('customers', token, pair.customerId + '/lessons/' + pair.lessonId)
+		getEntity('customers', token, pair.customerId + '/works/' + pair.lessonId)
 		.then(lesson => {
+			console.log(lesson)
 			lesson.customerId = pair.customerId;
 			lesson.id = pair.lessonId;
 			lessonsArr.push(lesson)
@@ -51,7 +52,7 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 			const theToken = localStorage.getItem('idToken');
 			const keys = [];
 			const lessonsArr = [];
-			getEntities('upcomingLessons', theToken)
+			getEntities('upcomingWorks', theToken)
 			.then(lessons => {
 				for(let k in lessons){
 					keys.push({lessonId: k, customerId: lessons[k]})
@@ -96,7 +97,7 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 				{!isReady && <Spinner />}
 				{isReady && lessons
 						.filter(filterByDate)
-						.map(p => <Lesson 
+						.map(p => <Work 
 						key={p.id} 
 						lesson={p} 
 						showPayment={false}
@@ -111,4 +112,4 @@ const UpcomingLessons = ({clickHandler, editLesson, changeStatus, doubleClickHan
 	)
 }
 
-export default UpcomingLessons;
+export default UpcomingWorks;

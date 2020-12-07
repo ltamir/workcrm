@@ -13,6 +13,7 @@ import Button from '../components/gui/Button';
 import StateButton from '../components/gui/StateButton';
 import Spinner from '../components/gui/Spinner';
 import UpcomingLessons from '../components/lesson/UpcomingLessons';
+import UpcomingWorks from '../components/work/UpcomingWorks';
 
 const WorkCrm = ({isAuthed, logoutTime}) => {
 	const [searchCustPerson, setSearchCustPerson] = useState('');
@@ -119,7 +120,9 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 					</span>
 				</div>
 				<span className="WorkCrmMenu">
-					<NavLink to="/workcrm/upcominglessons">UPCOMING LESSONS</NavLink>
+					<NavLink to="/workcrm/upcominglessons">LESSONS</NavLink>
+					<NavLink to="/workcrm/upcomingworks">WORKS</NavLink>
+					<NavLink to="/workcrm/upcoming">ALL</NavLink>
 					<NavLink to="/workcrm/persons">ADD PERSON</NavLink>
 				</span>
 				<span className="WorkCrmMenu">
@@ -183,6 +186,16 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 				 exact/>	
 				<Route path="/workcrm/upcominglessons" render={
 					props => <UpcomingLessons 
+					match={props.match}
+					personTypes={reference.personType}
+					editLesson={editLesson}
+					changeStatus={entityOperations.updateLessonStatus}
+					navTo={navigateAfterSave}
+					onSavePerson={entityOperations.insertPerson}
+					/>}
+				 />
+				<Route path="/workcrm/upcomingworks" render={
+					props => <UpcomingWorks
 					match={props.match}
 					personTypes={reference.personType}
 					editLesson={editLesson}

@@ -5,9 +5,11 @@ import {NavLink, Route, useHistory} from 'react-router-dom'
 import Customer from './Customer';
 import Person from './person/Person';
 import Lessons from './lesson/Lessons'
+import Works from './work/Works'
 import Persons from './person/Persons'
 import Payments from './payment/Payments'
 import EditLesson from './lesson/EditLesson';
+import EditWork from './work/EditWork';
 import EditPerson from './person/EditPerson';
 import './EntityView.css';
 import EditPayment from './payment/EditPayment';
@@ -57,6 +59,11 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 				if(!customer.leadingPerson)
 					alert('missing leading  person ' + customer.title);
 				customer.id = match.params.customerId;
+				if(!customer.works){
+					console.log('adding works');
+					customer.works = {}
+				}
+				Object.keys(customer.works).forEach( w => customer.works[w].id = w);
 				setCustomer(customer);
 				// console.log("EntityView CTOR", customer);
 				const presons = [];
@@ -107,6 +114,14 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 		entityOperations.updateLesson(lesson, customer.id, navTo, setIsUpdated, touchUpdatedLessons)
 	}
 
+	const insertWorkHandler = (lesson, navTo, setIsUpdated, touchUpdatedLessons) => {
+		entityOperations.insertWork(lesson, customer.id, navTo, setIsUpdated, touchUpdatedLessons)
+	}
+	const updateWorkHandler = (lesson, navTo, setIsUpdated, touchUpdatedLessons) => {
+		customer.lessons[lesson.id] = lesson
+		entityOperations.updateWork(lesson, customer.id, navTo, setIsUpdated, touchUpdatedLessons)
+	}
+
 
 	const editPayment = (lesson, paymentId) => {
 		
@@ -140,10 +155,12 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 				<div className="Menu">
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/persons/0`}>ADD PERSON</NavLink>
 					<NavLink to={{pathname: `/workcrm/customers/${match.params.customerId}/lessons/0`, state:{isNew: true}}}>ADD LESSON</NavLink>
+					<NavLink to={{pathname: `/workcrm/customers/${match.params.customerId}/works/0`, state:{isNew: true}}}>ADD WORK</NavLink>
 				</div>
 				<div className="Menu" >
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/persons`} exact>PERSONS</NavLink>	
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/lessons`} exact>LESSONS</NavLink>	
+					<NavLink to={`/workcrm/customers/${match.params.customerId}/works`} exact>WORKS</NavLink>	
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/payments`}>PAYMENTS</NavLink>	
 				</div>
 			</div>}
@@ -163,10 +180,13 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 			}/>
 				
 			<Route path="/workcrm/customers/:customerId/lessons" exact render={
-				() => <Lessons lessons={customer.lessons || {}} editLesson={editLesson} doubleClickHandler={editLesson} navToPayment={editPayment}/>
-						
+				() => <Lessons lessons={customer.lessons || {}} editLesson={editLesson} doubleClickHandler={editLesson} navToPayment={editPayment}/>	
 			}/>
-	
+
+			<Route path="/workcrm/customers/:customerId/works" exact render={
+				(props) => <Works lessons={customer.works || {}} customerId={props.match.params.customerId} doubleClickHandler={editLesson} navToPayment={editPayment}/>	
+			}/>
+
 			<Route path="/workcrm/customers/:customerId/payments" exact render={
 				() => <Payments paymentIds={customer.payments} persons={persons} editPayment={editPayment} navToPayment={editPayment}/>
 			}/>
@@ -191,6 +211,17 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={updateLessonHandler}
+					/>} exact/>	
+			<Route path="/workcrm/customers/:customerId/works/:workId" render={
+				props => <EditWork 
+					match={props.match}
+					customer={customer.id}
+					work = {customer.works[props.match.params.workId]}
+					navTo={navigateBack}
+					persons={persons}
+					paymentIds={customer.payments}
+					setIsUpdated={setIsUpdated}
+					onSaveLesson={{c: insertWorkHandler, u: updateWorkHandler}}
 					/>} exact/>	
 				<Route path="/workcrm/customers/:customerId/persons/0" exact render={
 					props => <EditPerson 
