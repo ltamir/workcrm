@@ -1,7 +1,7 @@
 import React from 'react';
 import './Customer.css'
-import Field from './gui/Field';
-import Button from './gui/Button';
+import Field from '../gui/Field';
+import Button from '../gui/Button';
 
 
 const Customer = ({customer, leadingPerson, editHandler, setShowCustomerEdit}) =>{
@@ -43,7 +43,7 @@ const Customer = ({customer, leadingPerson, editHandler, setShowCustomerEdit}) =
 				<span style={{marginRight: '8px', marginLeft: 'auto'}}> 
 					<Button label="Edit" onClick={() => setShowCustomerEdit(prev => !prev)}/>
 				</span>
-			</div>			
+			</div>
 		</div>
 	)
 }

@@ -3,10 +3,9 @@
 	cursor: pointer;
 	margin: 1px;
 }
-.CustomerRow{
 
+.CustomerRow{
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	
 }

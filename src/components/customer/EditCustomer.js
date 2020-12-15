@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 // import {getEntity} from '../server/firebase';
-import * as operations from '../server/EntityOperations';
-import Input from '../components/gui/Input';
-import Select from '../components/gui/Select';
+import * as operations from '../../server/EntityOperations';
+import Input from '../gui/Input';
+import Select from '../gui/Select';
 import './EditCustomer.css'
-import Button from './gui/Button';
+import Button from '../gui/Button';
 
 const EditCustomer = ({customer, customerPersons, navTo, setIsUpdated}) =>{
 	const [title, setTitle] = useState('');

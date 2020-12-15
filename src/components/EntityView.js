@@ -2,7 +2,8 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {getEntity} from '../server/firebase';
 import * as entityOperations from '../server/EntityOperations';
 import {NavLink, Route, useHistory} from 'react-router-dom'
-import Customer from './Customer';
+import Customer from './customer/Customer.jsx';
+import EditCustomer from './customer/EditCustomer';
 import Person from './person/Person';
 import Lessons from './lesson/Lessons'
 import Works from './work/Works'
@@ -13,12 +14,13 @@ import EditWork from './work/EditWork';
 import EditPerson from './person/EditPerson';
 import './EntityView.css';
 import EditPayment from './payment/EditPayment';
-import EditCustomer from './EditCustomer';
 import TitleField from './gui/TitleField';
 import Spinner from './gui/Spinner';
 
 
-const EntityView = ({match, personTypes, payChannels}) =>{
+const EntityView = (props) =>{
+	const {match, reference} = props;
+
 	const [customer, setCustomer] = useState({});
 	const [leadingPerson, setLeadingPerson] = useState(null);
 	const [persons, setPersons] = useState([]);
@@ -171,12 +173,12 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 			{isReady && <Person 
 				person={leadingPerson} 
 				onDblCLick={editPerson} 
-				personType={personTypes[leadingPerson.personType]}/>}
+				personType={reference.personType[leadingPerson.personType]}/>}
 
 			<TitleField value={" "} />
 
 			<Route path="/workcrm/customers/:customerId/persons" exact render={
-				() => <Persons persons={persons.filter(p => p.id !== customer.leadingPerson )} personTypes={personTypes} editHandler={editPerson}/>
+				() => <Persons persons={persons.filter(p => p.id !== customer.leadingPerson )} personTypes={reference.personType} editHandler={editPerson}/>
 			}/>
 				
 			<Route path="/workcrm/customers/:customerId/lessons" exact render={
@@ -198,6 +200,8 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					location={props.location}
 					customerId={customer.id}
 					persons={persons}
+					subjectsList={reference.subjects}
+					workTypeList={reference.workType}
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={insertLessonHandler}
@@ -208,6 +212,8 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					location={props.location}
 					navTo={navigateBack}
 					persons={persons}
+					subjectsList={reference.subjects}
+					workTypeList={reference.workType}
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={updateLessonHandler}
@@ -227,7 +233,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					props => <EditPerson 
 						match={props.match}
 						navTo={navigateBack}
-						personTypes={personTypes}
+						personTypes={reference.personType}
 						setIsUpdated={setIsUpdated}
 						onSavePerson={entityOperations.insertPerson}
 						/>
@@ -237,7 +243,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 					props => props.match.params.personId !== '0' && <EditPerson 
 						match={props.match}
 						navTo={navigateBack}
-						personTypes={personTypes}
+						personTypes={reference.personType}
 						setIsUpdated={setIsUpdated}
 						onSavePerson={entityOperations.updatePerson}
 						/>
@@ -250,7 +256,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 						persons={persons}
 						navTo={navigateBack}
 						setIsUpdated={setIsUpdated}
-						payChannels={payChannels}
+						payChannels={reference.payChannel}
 						onSavePayment={entityOperations.updatePayment}
 						/>
 					} 
@@ -262,7 +268,7 @@ const EntityView = ({match, personTypes, payChannels}) =>{
 						persons={persons}
 						navTo={navigateBack}
 						setIsUpdated={setIsUpdated}
-						payChannels={payChannels}
+						payChannels={reference.payChannel}
 						onSavePayment={entityOperations.insertPayment}
 						/>
 					} 
