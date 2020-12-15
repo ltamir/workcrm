@@ -71,7 +71,8 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 	const savePayment = event => {
 		event.preventDefault();
 		// console.log({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons});
-		onSavePayment({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons}, navTo, setIsUpdated)
+		const workType = lesson.workType && lesson.workType === 'work' ? true : false;
+		onSavePayment({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons}, navTo, setIsUpdated, workType)
 	}
 
 	

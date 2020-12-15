@@ -9,7 +9,7 @@ import './EditWork.css'
 
 
 
-const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdated, navTo}) =>{
+const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentIds, onSaveLesson, setIsUpdated, navTo}) =>{
 	const [title, SetTitle] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [startTime, setStartTime] = useState('');
@@ -20,11 +20,11 @@ const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdat
 	const [isDone, setIsDone] = useState(false);
 	const [notes, setNotes] = useState('');
 	const [subjects, setSubjects] = useState(0);
+	const [workType, setWorkType] = useState(0);
 	const [id, setId] = useState(-1);
 
 	const [payments, setPayments] = useState([{id: -2, name: 'Load payment'}]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [availableSubjects, setAvailableSubjects] = useState([]);
 
 
 	const setLesson = lesson => {
@@ -38,6 +38,7 @@ const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdat
 		setIsDone(lesson.isDone);
 		setNotes(lesson.notes);
 		setSubjects(lesson.subjects);
+		setWorkType(lesson.workType || 'work')
 		setId(lesson.id);
 	}
 
@@ -81,27 +82,26 @@ const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdat
 
 
 	useEffect(() => {
-		const theToken = localStorage.getItem('idToken');
-		getEntities('reference/subjects', theToken)
-		.then(response => {
-			const arr = [];
-			for(let k in response){
-				arr.push({id: k, title: response[k]})
-			}
-			setAvailableSubjects([...arr])
-				
-			if(work){
-				console.log("EditLesson CTOR", work);
-				setLesson(work);
-			} else {
-				const now = new Date().toISOString().replace('T', ' ').substr(0, 16)
-				const work = {id: -1, title: '', startDatetime: now, 
-					duration: 1, person: persons[0].id, isDone: false, charge: 0.00, payment: -1, 
-					subjects: arr[0].id, notes: ''}	
-				setLesson(work);
-			}
-		})
-
+		// const theToken = localStorage.getItem('idToken');
+		// getEntities('reference/subjects', theToken)
+		// .then(response => {
+		// 	const arr = [];
+		// 	for(let k in response){
+		// 		arr.push({id: k, title: response[k]})
+		// 	}
+		// 	setAvailableSubjects([...arr])
+			
+		// })
+		if(work){
+			console.log("EditLesson CTOR", work);
+			setLesson(work);
+		} else {
+			const now = new Date().toISOString().replace('T', ' ').substr(0, 16)
+			const work = {id: -1, title: '', startDatetime: now, 
+				duration: 1, person: persons[0].id, isDone: false, charge: 0.00, payment: -1, 
+				subjects: 'React', notes: ''}	
+			setLesson(work);
+		}
 	}, [work, location, persons])
 
 
@@ -133,13 +133,18 @@ const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdat
 						value={startTime} 
 						onChange={e => setStartTime(e.target.value)} 
 						Title="Start time"/>
-					<Select 
+					{/* <Select 
 						label="Subjects"
 						value={subjects}
 						onChange={e => setSubjects(e.target.value)}
 						optionsArr={availableSubjects.length && availableSubjects.map(sub =>{
 							return {id: sub.id, name: sub.id}
-						})} />
+						})} /> */}
+					<Select 
+						label="Subjects"
+						value={subjects}
+						onChange={e => setSubjects(e.target.value)}
+						optionsArr={Object.keys(subjectsList).map(k => {return {id: k, name: k}})} />						
 					<Select 
 						label="Student" 
 						value={person} 
@@ -162,7 +167,12 @@ const EditWork = ({work, location, persons, paymentIds, onSaveLesson, setIsUpdat
 						type="checkbox" 
 						checked={isDone} 
 						value={isDone} 
-						onChange={e => setIsDone(e.target.checked)}/>							
+						onChange={e => setIsDone(e.target.checked)}/>	
+					<Select 
+						label="Type" 
+						value={workType} 
+						onChange={e => setWorkType(e.target.value)}
+						optionsArr={Object.keys(workTypeList).map(k => { return {id: k, name: workTypeList[k]} })}/>												
 				</div>
 				<div className="EditLessonRow">
 					{isLoading && <Spinner sm/>}

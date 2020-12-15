@@ -27,7 +27,7 @@ const Works = ({lessons, clickHandler, customerId, doubleClickHandler, navToPaym
 			{!isReady && <Spinner />}
 			{isReady && lessonsToRender.map(lesson => <Work 
 				key={lesson.id} 
-				lesson={lesson} 
+				lesson={lesson.workType ? lesson: {...lesson, workType: 'work'}} 
 				showPayment={true}
 				clickHandler={clickHandler} 
 				doubleClickHandler={doubleClickHandler}

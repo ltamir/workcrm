@@ -148,10 +148,9 @@ const EntityView = (props) =>{
 		}
 	}
 
-
 	return (
 		<div>
-			{!isReady && <Spinner />}
+			{!isReady && ( <Spinner />)}
 			{isReady && <div className="Menu">
 				<NavLink to={`/workcrm/customers/${match.params.customerId}`} exact>{customer.title || (leadingPerson && leadingPerson.fullname) || ''}</NavLink>
 				<div className="Menu">
@@ -222,9 +221,11 @@ const EntityView = (props) =>{
 				props => <EditWork 
 					match={props.match}
 					customer={customer.id}
-					work = {customer.works[props.match.params.workId]}
+					work = {props.match.params && props.match.params.workId?customer.works[props.match.params.workId]:null}
 					navTo={navigateBack}
 					persons={persons}
+					subjectsList={reference.subjects}
+					workTypeList={reference.workType}					
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={{c: insertWorkHandler, u: updateWorkHandler}}
