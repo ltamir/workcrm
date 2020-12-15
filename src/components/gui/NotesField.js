@@ -10,10 +10,10 @@ const getDirectionStyle = d => {
 	return {direction: 'ltr', fontWeight: 'normal', fontSize: '14px', whiteSpace: 'pre-line'};
 }
 
-const NotesField = ({name, value}) => (
+const NotesField = ({name, value, icon}) => (
 	<div className="Field">
-		<div style={name? gui.getDirectionStyle(name) : null} className="FieldLabel">{name? name : null}</div>
-		<div className="FieldData" style={getDirectionStyle(value)}>{value? value : null}</div>
+		<span style={name? gui.getDirectionStyle(name) : null} className="FieldLabel">{name? name : null}</span>
+		<div className="FieldData" style={getDirectionStyle(value)}>{icon && <span className="material-icons">{icon}</span>}{value? value : null}</div>
 	</div>
 );
 
