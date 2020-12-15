@@ -6,7 +6,7 @@ import TitleField from './gui/TitleField';
 import Input from './gui/Input';
 import Button from './gui/Button';
 
-const AuthCtx = React.createContext({isAuth: false});
+const AuthCtx = React.createContext();
 
 const Login = () =>{
 	const [email, setEmail] = useState(process.env.REACT_APP_FB_DEFAULT_EMAIL);
