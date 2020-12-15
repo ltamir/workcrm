@@ -22,6 +22,7 @@ const Lesson = ({lesson, clickHandler, changeStatus, showPayment, editLesson, na
 		changeStatus(lesson.id, lesson.customerId, lesson.isDone, true)
 	}
 
+
 	const LinkToCust = (props) => !showPayment ? <Link to={`/workcrm/customers/${lesson.customerId}`} title="View Customer">{props.children}</Link> : <span>{props.children}</span>
 	return(
 	<div 
