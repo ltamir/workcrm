@@ -12,7 +12,15 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
+	align-items: flex-start;
 }
+
+.PersonColumn{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
 
 .Person .PersonType:last-child {
 	margin-right: 2px;
