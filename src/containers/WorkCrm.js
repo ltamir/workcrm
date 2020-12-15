@@ -1,40 +1,41 @@
-import React, {useState, useEffect} from 'react';
-import {NavLink, Route, useHistory} from 'react-router-dom';
-import {getEntities, getEntitiesWithFilter} from '../server/firebase'
+import React, {useState, useEffect, useReducer} from 'react';
+import { Route, useHistory} from 'react-router-dom';
+import {getEntities} from '../server/firebase'
 import * as entityOperations from '../server/EntityOperations';
 import * as utils from '../components/gui/utils'
 import './WorkCrm.css'
 
+import {rootReducer} from '../store/reducers';
+import {initialState} from '../store/initialState';
+import * as actionTypes from '../store/actionTypes';
+
 import EntityView from '../components/EntityView';
 import Persons from '../components/person/Persons';
 import EditPerson from '../components/person/EditPerson';
-import Input from '../components/gui/Input';
-import Button from '../components/gui/Button';
-import StateButton from '../components/gui/StateButton';
 import Spinner from '../components/gui/Spinner';
 import UpcomingLessons from '../components/lesson/UpcomingLessons';
 import UpcomingWorks from '../components/work/UpcomingWorks';
+import Navbar from '../components/Navbar';
 
 const WorkCrm = ({isAuthed, logoutTime}) => {
-	const [searchCustPerson, setSearchCustPerson] = useState('');
+	const [filterText, setFilterText] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
 	// const [persons, setPersons] = useState([]);
 	// const [customers, setCustomers] = useState([]);
 	const [activeState, setActiveState] = useState(1);
 	const [isLoading, setIsLoading] = useState(true);
+
+	const [data, dispatch] = useReducer(rootReducer, initialState)
 	
 	const [reference, setReference] = useState(null);
 
 	const history = useHistory();
 
-	const clearSearch = () => {
-		setSearchCustPerson('');
-	}
 
 	const allPersons = () => {
 		const theToken = localStorage.getItem('idToken');
 		setIsLoading(true);
-		
+		// dispatch({type: actionTypes.LOAD_PERSONS})
 		const filter = `orderBy="isActive"&startAfter=true`
 		getEntities('persons', theToken)			
 		.then( persons => {
@@ -44,31 +45,21 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 					personArr.push({...persons[k], id: k});
 				}
 			}
-			// getEntitiesWithFilter('customers', theToken, filter)
-			// .then(customers => {
 
-			// 	const customersArr = [];
-			// 	for (let k in customers){
-			// 		if(customers[k]){
-			// 			customersArr.push({...customers[k], id: k});
-			// 		}
-			// 	}
-			// 	setPersons([...personArr])
-			// 	setCustomers([...customersArr])
-
-			// 	console.log(customers);
-			// })
 			setSearchResults([...personArr])
 			setIsLoading(false);
 		})
 	}
 
+	const clearSearch = () => {
+		setFilterText('');
+	}
+
 	const searchInputHandler = event => {
-		setSearchCustPerson(event.target.value)
+		setFilterText(event.target.value)
 	}
 
 	const showCustomerHandler = person => {
-		// console.log(person);
 		if(person.customer && person.customer !== -1){
 			history.push(`/workcrm/customers/${person.customer}`)
 		} else {
@@ -81,7 +72,6 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 	}
 
 	const navigateAfterSave = (entity, id) => {
-		// console.log('pushing ', history.location.pathname);
 		history.push(history.location.pathname)
 	}
 
@@ -119,27 +109,13 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 							{isAuthed? 'lock_open' : 'lock'}
 					</span>
 				</div>
-				<span className="WorkCrmMenu">
-					<NavLink to="/workcrm/upcominglessons">LESSONS</NavLink>
-					<NavLink to="/workcrm/upcomingworks">WORKS</NavLink>
-					<NavLink to="/workcrm/upcoming">ALL</NavLink>
-					<NavLink to="/workcrm/persons">ADD PERSON</NavLink>
-				</span>
-				<span className="WorkCrmMenu">
-				<Input 
-					title="name or phone" 
-					size="10"
-					value={searchCustPerson} 
-					onChange={searchInputHandler}/>
-				<StateButton buttons={[
-					{icon:'star', title:'Active Persons', value:1}, 
-					{icon:'star_border', title:'Inactive Persons', value:0},
-					{icon:'star_half', title:'All Persons', value:-1},
-					]} setter={setActiveState}/>
-					
-					<Button icon="cached" title="Refresh" shadow="2px 4px 8px 0 #696969" onClick={allPersons}/>
-					<Button icon="search_off" title="Clear search" shadow="2px 4px 8px 0 #696969" onClick={clearSearch}/>
-				</span>
+				<Navbar 
+					filterText={filterText}
+					clearSearch={clearSearch}
+					searchInputHandler={searchInputHandler}
+					setActiveState={setActiveState} 
+					allPersons={allPersons}/>
+
 			</div>
 
 			<div style={{height: '40vh', overflowY: 'auto'}}>
@@ -149,9 +125,9 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 						p => {
 							switch(activeState){
 								case 1:
-									return p.isActive && p.personType === 0? p : null;
+									return p.isActive && p.personType === 0;	
 								case 0:
-									return !p.isActive? p : null;
+									return !p.isActive;
 								case -1:
 									return p;
 								default:
@@ -160,7 +136,8 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 							}
 						})
 						.filter(p => {
-							return p.fullname.toLowerCase().includes(searchCustPerson.toLowerCase()) || p.phone.includes(searchCustPerson)
+							return p.fullname.toLowerCase().includes(filterText.toLowerCase()) 
+							|| p.phone.includes(filterText)
 						}).sort( (a, b) => a.fullname.localeCompare(b.fullname))
 					}
 					personTypes={reference.personType}
@@ -208,6 +185,7 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 				<Route path="/workcrm/customers/:customerId" render={
 					props => <EntityView 
 						match={props.match}
+						reference={reference}
 						personTypes={reference.personType}
 						payChannels={reference.payChannel}
 						onUpdateCustomer={entityOperations.updateCustomer}
