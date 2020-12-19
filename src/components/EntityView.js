@@ -119,7 +119,7 @@ const EntityView = (props) =>{
 		entityOperations.insertWork(lesson, customer.id, navTo, setIsUpdated, touchUpdatedLessons)
 	}
 	const updateWorkHandler = (lesson, navTo, setIsUpdated, touchUpdatedLessons) => {
-		customer.lessons[lesson.id] = lesson
+		customer.works[lesson.id] = lesson
 		entityOperations.updateWork(lesson, customer.id, navTo, setIsUpdated, touchUpdatedLessons)
 	}
 
