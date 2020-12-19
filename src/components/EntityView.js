@@ -62,7 +62,6 @@ const EntityView = (props) =>{
 					alert('missing leading  person ' + customer.title);
 				customer.id = match.params.customerId;
 				if(!customer.works){
-					console.log('adding works');
 					customer.works = {}
 				}
 				Object.keys(customer.works).forEach( w => customer.works[w].id = w);

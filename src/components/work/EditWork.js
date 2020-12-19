@@ -6,6 +6,7 @@ import Select from '../gui/Select';
 import Button from '../gui/Button';
 import Spinner from '../gui/Spinner';
 import './EditWork.css'
+import Task from './Task';
 
 
 
@@ -21,6 +22,7 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 	const [notes, setNotes] = useState('');
 	const [subjects, setSubjects] = useState(0);
 	const [workType, setWorkType] = useState(0);
+	const [tasks, setTasks] = useState([]);
 	const [id, setId] = useState(-1);
 
 	const [payments, setPayments] = useState([{id: -2, name: 'Load payment'}]);
@@ -39,6 +41,7 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 		setNotes(lesson.notes);
 		setSubjects(lesson.subjects);
 		setWorkType(lesson.workType || 'work')
+		setTasks(lesson.tasks || [])
 		setId(lesson.id);
 	}
 
@@ -82,16 +85,6 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 
 
 	useEffect(() => {
-		// const theToken = localStorage.getItem('idToken');
-		// getEntities('reference/subjects', theToken)
-		// .then(response => {
-		// 	const arr = [];
-		// 	for(let k in response){
-		// 		arr.push({id: k, title: response[k]})
-		// 	}
-		// 	setAvailableSubjects([...arr])
-			
-		// })
 		if(work){
 			console.log("EditLesson CTOR", work);
 			setLesson(work);
@@ -108,8 +101,31 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 	const saveLesson = () => {
 		const touchUpdatedLessons = id !== -1 && work.isDone !== isDone ? !isDone : id === -1 ? true : null;
 		const saveFunc = work ? onSaveLesson.u : onSaveLesson.c;
-		saveFunc({id, title, startDatetime: startDate + " " + startTime, duration, person, isDone, charge, payment, subjects, notes}, navTo, setIsUpdated, touchUpdatedLessons)
+		saveFunc({id, title, startDatetime: startDate + " " + startTime, duration, person, isDone, tasks, charge, payment, subjects, notes}, navTo, setIsUpdated, touchUpdatedLessons)
 	}
+
+	const addTask=() =>{
+		const task = {id: new Date().getTime(), title: '', details: '', isDone: false};
+		const t = [...tasks];
+		t.push(task)
+		setTasks(t);
+	}
+
+	const updateTask = task => {
+		const ts = tasks.filter(t => t.id != task.id);
+		ts.push(task)
+		setTasks(ts);
+	}
+
+	const deleteTask = task => {
+		const isConfirmed = window.confirm(`Delete task ${task.title}?`);
+		if(isConfirmed){
+			const ts = tasks.filter(t => t.id != task.id);
+			setTasks(ts);
+		}
+
+	}
+
 
 	return(
 		<div className="EditLesson">
@@ -133,13 +149,6 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 						value={startTime} 
 						onChange={e => setStartTime(e.target.value)} 
 						Title="Start time"/>
-					{/* <Select 
-						label="Subjects"
-						value={subjects}
-						onChange={e => setSubjects(e.target.value)}
-						optionsArr={availableSubjects.length && availableSubjects.map(sub =>{
-							return {id: sub.id, name: sub.id}
-						})} /> */}
 					<Select 
 						label="Subjects"
 						value={subjects}
@@ -185,6 +194,13 @@ const EditWork = ({work, location, persons, subjectsList, workTypeList, paymentI
 						optionsArr={payments.map(p => { return {id: p.id, name: p.name}})}/>}						
 					<TextArea label="Notes" cols="80" value={notes} onChange={e => setNotes(e.target.value)}/>
 					<Button label="SAVE" onClick={saveLesson}/>
+				</div>
+				<div className="EditLessonRow">
+					<h4>TASKS</h4>
+					<Button label="ADD TASK" onClick={addTask}/>
+				</div>
+				<div>
+					{tasks.map((t, idx) => <Task key={idx} task={t} updateTask={updateTask} deleteTask={deleteTask}/>)}
 				</div>
 			</form>
 
