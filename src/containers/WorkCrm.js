@@ -137,7 +137,8 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 						})
 						.filter(p => {
 							return p.fullname.toLowerCase().includes(filterText.toLowerCase()) 
-							|| p.phone.includes(filterText)
+							|| p.phone.includes(filterText) 
+							|| p.email.toLowerCase().includes(filterText.toLowerCase())
 						}).sort( (a, b) => a.fullname.localeCompare(b.fullname))
 					}
 					personTypes={reference.personType}
