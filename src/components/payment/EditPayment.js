@@ -18,6 +18,7 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 	const [payer, setPayer] = useState('');
 	const [payChannel, setPayChannel] = useState({id:''});
 	const [amount, setAmount] = useState(0.0);
+	const [recipt, setRecipt] = useState('');
 	const [lessons, setLessons] = useState('');
 	const [customer, setCustomer] = useState(match.params.customerId);
 	const [id, setId] = useState(-1);
@@ -30,6 +31,7 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 		setPayer(payment.payer);
 		setPayChannel(payment.payChannel);
 		setAmount(+(payment.amount));
+		setRecipt(payment.recipt || '');
 		setLessons(payment.lessons);
 		setCustomer(payment.customer);
 		setId(payment.id);
@@ -70,9 +72,10 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 
 	const savePayment = event => {
 		event.preventDefault();
+		console.log(lesson);
 		// console.log({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons});
 		const workType = lesson.workType && lesson.workType === 'work' ? true : false;
-		onSavePayment({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons}, navTo, setIsUpdated, workType)
+		onSavePayment({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, recipt, payChannel, lessons}, navTo, setIsUpdated, workType)
 	}
 
 	
@@ -101,6 +104,7 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 					optionsArr={Object.entries(payChannels).map(([k, v]) => { return {name: k + ' +' + v.delay, id: k}})}
 					/>
 				<Input label="Amount" type="number" value={amount} onChange={e => setAmount(+(e.target.value))} />
+				<Input label="Recipt ID" value={recipt} onChange={e => setRecipt(e.target.value)} />
 				<Button label="SAVE" onClick={event => savePayment(event)} style={{float: 'right'}} />
 				</div>
 
