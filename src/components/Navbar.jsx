@@ -1,12 +1,15 @@
-import {useState} from 'react';
 import {NavLink} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import { loadPersons} from '../store/actions' 
+
 import Input from './gui/Input';
 import StateButton from './gui/StateButton';
 import Button from './gui/Button';
 import styles from './Navbar.module.css'
 
 const Navbar = props => {
-	const {filterText, clearSearch, searchInputHandler, setActiveState, allPersons} = props;
+	const {filterText, clearSearch, searchInputHandler, setActiveState} = props;
+	const dispatch = useDispatch();
 
 	return (
 		<>
@@ -27,7 +30,7 @@ const Navbar = props => {
 					{icon:'star_border', title:'Inactive Persons', value:0},
 					{icon:'star_half', title:'All Persons', value:-1},
 					]} setter={setActiveState}/>
-				<Button icon="cached" title="Refresh" shadow="2px 4px 8px 0 #696969" onClick={allPersons}/>
+				<Button icon="cached" title="Refresh" shadow="2px 4px 8px 0 #696969" onClick={dispatch(loadPersons)}/>
 				<Button icon="search_off" title="Clear search" shadow="2px 4px 8px 0 #696969" onClick={clearSearch}/>
 			</span>
 		</>

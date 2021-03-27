@@ -1,6 +1,37 @@
 
 const url = process.env.REACT_APP_FB_URL;
 
+export const loginApi = async(email, password) => {
+	const signinUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FB_APP_KEY}`;
+	const payLoad = {
+		email,
+		password,
+		returnSecureToken: true
+	}
+	const rawResp = await fetch(signinUrl, {
+		method: 'post',
+		headers:{'Content-Type': 'application/json'},
+		body: JSON.stringify(payLoad)
+	})
+	const resp = await rawResp.json();
+	console.log(resp);
+	return resp;
+}
+
+export const entitiesApi = async (entity, token) => {
+	try{
+		const rawResp = await fetch(`${url}/${entity}.json?auth=${token}`);
+		console.log('entitiesApi', rawResp);
+		const resp = await rawResp.json();
+		console.log(resp);
+		return resp;
+	}catch(err){
+		console.log(err);
+	}
+
+	
+}
+ // ***** pre redux ***** //
 export const signIn = async (email, password, logout) => {
 	const signinUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FB_APP_KEY}`;
 	const payLoad = {
@@ -68,7 +99,7 @@ export const getEntities = (entity, idToken) => {
 		return response.json()
 	})
 	.catch(err => {
-		console.log(err.json());
+		console.log(err);
 	})	
 }
 

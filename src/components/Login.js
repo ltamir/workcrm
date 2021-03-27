@@ -1,17 +1,20 @@
-import React, {useState, useEffect, useCallback, useRef, useContext} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import WorkCrm from '../containers/WorkCrm';
-import {signIn} from '../server/firebase';
 import {useHistory} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {login} from '../store/actions' 
 import TitleField from './gui/TitleField';
 import Input from './gui/Input';
 import Button from './gui/Button';
 
-const AuthCtx = React.createContext();
+// const AuthCtx = React.createContext();
 
 const Login = () =>{
+	const dispatch = useDispatch();
+	const auth = useSelector( state => state.workcrm.auth);
+
 	const [email, setEmail] = useState(process.env.REACT_APP_FB_DEFAULT_EMAIL);
 	const [password, setPassword] = useState(process.env.REACT_APP_FB_DEFAULT_PASSWORD);
-	const [isAuth, setIsAuth] = useState(false);
 	const [logoutTime, setLogoutTime] = useState(0);
 
 	const logoutTimer = useRef(null);
@@ -19,7 +22,6 @@ const Login = () =>{
 	const history = useHistory();
 
 	const logout = useCallback(() => {
-		setIsAuth(true);
 		const idTokenStamp = localStorage.getItem('idTokenStamp');
 		const tokenDate = new Date(idTokenStamp).getTime();
 		const now = new Date();
@@ -40,7 +42,7 @@ const Login = () =>{
 			}
 			const now = new Date().toISOString()
 			console.log('auto logout', now);
-			setIsAuth(false);
+		//	setIsAuth(false);
 
 			history.push('/workcrm');
 		}, timelength);
@@ -49,10 +51,9 @@ const Login = () =>{
 
 	}, [history]);
 
-	const login = () => {
+	const onLogin = () => {
 		localStorage.removeItem('idToken');
-		signIn(email, password, logout);
-		
+		dispatch(login(email, password))		
 	}
 
 	//  for auto login
@@ -63,9 +64,8 @@ const Login = () =>{
 		const now = new Date();
 		
 		if(idTokenStamp && now.getTime() < tokenDate.getTime()){
-			setIsAuth(true)
+			//setIsAuth(true)
 			setLogoutTime(tokenDate.getTime());
-			console.log(tokenDate.toISOString(), 'AUTH');
 		}	else {
 
 			console.log(tokenDate.toISOString() || 'no token date', 'NOT AUTH');
@@ -73,35 +73,30 @@ const Login = () =>{
 	}, [])
 
 	useEffect( () => {
-		authStatus();
-	}, [isAuth, authStatus])
+		// authStatus();
+	}, [auth.isAuth])
 
 
+	console.log('isAuth', auth.isAuth);
+	if(auth.isAuth){
+		return <WorkCrm isAuthed={true} logoutTime={logoutTime}/>
+	}
 	return(
 		<span>
-			<AuthCtx.Provider value={{isAuth: isAuth}}>
-			<AuthHoc>
-				{<WorkCrm isAuthed={true} logoutTime={logoutTime}/>}
-			</AuthHoc>
-			{!isAuth && <div style={{margin: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
+			<div style={{margin: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
 				<div style={{width: '50%', margin: '10px'}}>
-						<Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-						<Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-					</div>
-					<div style={{width: '50%', margin: '10px'}}>
-						<div style={{margin: '8px'}}>  </div>
-						<TitleField value={isAuth ? 'AUTHENTICATED' : 'NOT AUTHENTICATED'} />
-						<Button label="AUTHENTICATE" onClick={login}/>
-					</div>
-				</div>}
-			</AuthCtx.Provider>
-
+					<Input label="Email" size={15} type="email" value={email} onChange={e => setEmail(e.target.value)} />
+					<Input label="Password" size={15} type="password" value={password} onChange={e => setPassword(e.target.value)} />
+				</div>
+				<div>
+					<div style={{margin: '8px'}}>  </div>
+					<TitleField value={auth.isAuth ? 'AUTHENTICATED' : 'NOT AUTHENTICATED'} />
+					<div style={{padding: '2px'}}></div>
+					<Button label="AUTHENTICATE" onClick={onLogin}/>
+				</div>
+			</div>
 		</span>
 	)
 }
 
-const AuthHoc = (props) => {
-	const ctx = useContext(AuthCtx);
-	return ctx.isAuth && props.children
-}
 export default Login;

@@ -13,12 +13,12 @@ const getDirectionStyle = (value) => {
 
 const getStyle = (value, type, size) => {
 	const dir = type === 'text' ? getDirectionStyle(value) : null;
-	const width = size? {width: `${size}em`} : null;
+	const width = size? {width: `${size? size :  12}em`} : null;
 	return {...dir, ...width}
 }
 
 const Input = ({label, title, name, value, type, size, onChange}) => (
-	<div title={title? title : label} className="Input" style={size? {width: `${size}em`} : null}>
+	<div title={title? title : label} className="Input" style={size? {width: `${size? +size + 1 :  13}em`} : null}>
 		{label && <span className="InputTitle">{label? label + ": " : null}</span>}
 		{label && <br/>}
 		<input 

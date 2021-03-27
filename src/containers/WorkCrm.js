@@ -1,13 +1,12 @@
-import React, {useState, useEffect, useReducer} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Route, useHistory} from 'react-router-dom';
-import {getEntities} from '../server/firebase'
 import * as entityOperations from '../server/EntityOperations';
 import * as utils from '../components/gui/utils'
 import './WorkCrm.css'
 
-import {rootReducer} from '../store/reducers';
-import {initialState} from '../store/initialState';
-import * as actionTypes from '../store/actionTypes';
+import {useDispatch, useSelector} from 'react-redux';
+
+import {loadReference, loadPersons} from '../store/actions' 
 
 import EntityView from '../components/EntityView';
 import Persons from '../components/person/Persons';
@@ -18,38 +17,19 @@ import UpcomingWorks from '../components/work/UpcomingWorks';
 import Navbar from '../components/Navbar';
 
 const WorkCrm = ({isAuthed, logoutTime}) => {
-	const [filterText, setFilterText] = useState('');
-	const [searchResults, setSearchResults] = useState([]);
-	// const [persons, setPersons] = useState([]);
-	// const [customers, setCustomers] = useState([]);
-	const [activeState, setActiveState] = useState(1);
-	const [isLoading, setIsLoading] = useState(true);
 
-	const [data, dispatch] = useReducer(rootReducer, initialState)
-	
-	const [reference, setReference] = useState(null);
+	const dispatch = useDispatch();
+	const reference = useSelector( state => state.workcrm.reference);
+	const customers = useSelector( state => state.workcrm.customers);
+	const contacts = useSelector( state => state.workcrm.persons);
+
+	const [filterText, setFilterText] = useState('');
+	// const [searchResults, setSearchResults] = useState([]);
+	const [activeState, setActiveState] = useState(1);
+	const [isLoading, setIsLoading] = useState(true);	
+	// const [reference, setReference] = useState(references);
 
 	const history = useHistory();
-
-
-	const allPersons = () => {
-		const theToken = localStorage.getItem('idToken');
-		setIsLoading(true);
-		// dispatch({type: actionTypes.LOAD_PERSONS})
-		const filter = `orderBy="isActive"&startAfter=true`
-		getEntities('persons', theToken)			
-		.then( persons => {
-			const personArr = [];
-			for (let k in persons){
-				if(persons[k]){
-					personArr.push({...persons[k], id: k});
-				}
-			}
-
-			setSearchResults([...personArr])
-			setIsLoading(false);
-		})
-	}
 
 	const clearSearch = () => {
 		setFilterText('');
@@ -86,16 +66,14 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 		if(isAuthed){
 			console.log('app authed');
 			const theToken = localStorage.getItem('idToken');
-
-			getEntities('reference', theToken)			
-			.then( reference => {
-				setReference(reference)
-				allPersons(theToken);
-			})
-		} else {
-			console.log('app NOT authed');
+			dispatch(loadReference('reference'));
+			// setReference(reference);
+			dispatch(loadPersons('persons'));
+			// setReference(reference);
+			// setSearchResults(contacts)
+			setIsLoading(false);
 		}
-	}, [isAuthed])
+	}, [])
 	
 	
 	return(
@@ -113,15 +91,13 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 					filterText={filterText}
 					clearSearch={clearSearch}
 					searchInputHandler={searchInputHandler}
-					setActiveState={setActiveState} 
-					allPersons={allPersons}/>
-
+					setActiveState={setActiveState}/>
 			</div>
 
 			<div style={{height: '40vh', overflowY: 'auto'}}>
 				{isLoading && <Spinner />}
 				{!isLoading && <Persons 
-					persons={searchResults.filter(
+					persons={contacts.filter(
 						p => {
 							switch(activeState){
 								case 1:
