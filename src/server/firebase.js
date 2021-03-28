@@ -27,10 +27,26 @@ export const entitiesApi = async (entity, token) => {
 		return resp;
 	}catch(err){
 		console.log(err);
-	}
-
-	
+	}	
 }
+
+export const saveApi = async (method, entity, payload, cb, func) => {
+	const idToken = localStorage.getItem('idToken');
+
+	const rawResp = await fetch(`${url}/${entity}.json?auth=${idToken}`, {
+		method: method,
+		headers:{
+			'Content-Type': 'application/json', 
+			'Accept': 'application/json'
+		},
+		body: JSON.stringify(payload)
+	});
+
+	const response = await rawResp.json();
+
+	return response;
+}
+
  // ***** pre redux ***** //
 export const signIn = async (email, password, logout) => {
 	const signinUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FB_APP_KEY}`;
