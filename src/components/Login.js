@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import WorkCrm from '../containers/WorkCrm';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
+import {loadReference, loadPersons, loadCustomers, loadData, startLoading, stopLoading} from '../store/actions' 
 import {login} from '../store/actions' 
 import TitleField from './gui/TitleField';
 import Input from './gui/Input';
@@ -12,6 +13,7 @@ import Button from './gui/Button';
 const Login = () =>{
 	const dispatch = useDispatch();
 	const auth = useSelector( state => state.workcrm.auth);
+	const isLoading = useSelector( state => state.workcrm.isLoading);
 
 	const [email, setEmail] = useState(process.env.REACT_APP_FB_DEFAULT_EMAIL);
 	const [password, setPassword] = useState(process.env.REACT_APP_FB_DEFAULT_PASSWORD);
@@ -53,7 +55,9 @@ const Login = () =>{
 
 	const onLogin = () => {
 		localStorage.removeItem('idToken');
+		dispatch(startLoading())
 		dispatch(login(email, password))		
+
 	}
 
 	//  for auto login
@@ -73,12 +77,20 @@ const Login = () =>{
 	}, [])
 
 	useEffect( () => {
-		// authStatus();
-	}, [auth.isAuth])
+		console.log('in useeffect with ', auth.isAuth);
+		if(auth.isAuth === true){			
+			console.log('loading data');
+			dispatch(loadData());
+			// dispatch(loadReference('reference'));
+			// dispatch(loadPersons('persons'));
+			// dispatch(loadCustomers('customers'));
+			// dispatch(stopLoading())
+		}
+	}, [auth, isLoading])
 
 
-	console.log('isAuth', auth.isAuth);
-	if(auth.isAuth){
+	console.log('isAuth isLoading', auth.isAuth, isLoading);
+	if(auth.isAuth === true && isLoading === false){
 		return <WorkCrm isAuthed={true} logoutTime={logoutTime}/>
 	}
 	return(
