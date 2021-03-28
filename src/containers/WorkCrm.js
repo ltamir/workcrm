@@ -6,8 +6,6 @@ import './WorkCrm.css'
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import {loadReference, loadPersons} from '../store/actions' 
-
 import EntityView from '../components/EntityView';
 import Persons from '../components/person/Persons';
 import EditPerson from '../components/person/EditPerson';
@@ -22,12 +20,11 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 	const reference = useSelector( state => state.workcrm.reference);
 	const customers = useSelector( state => state.workcrm.customers);
 	const contacts = useSelector( state => state.workcrm.persons);
+	const isLoading = useSelector( state => state.workcrm.isLoading);
 
 	const [filterText, setFilterText] = useState('');
-	// const [searchResults, setSearchResults] = useState([]);
+
 	const [activeState, setActiveState] = useState(1);
-	const [isLoading, setIsLoading] = useState(true);	
-	// const [reference, setReference] = useState(references);
 
 	const history = useHistory();
 
@@ -65,13 +62,8 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 	useEffect( () => {
 		if(isAuthed){
 			console.log('app authed');
-			const theToken = localStorage.getItem('idToken');
-			dispatch(loadReference('reference'));
-			// setReference(reference);
-			dispatch(loadPersons('persons'));
-			// setReference(reference);
-			// setSearchResults(contacts)
-			setIsLoading(false);
+
+			// setIsLoading(false);
 		}
 	}, [])
 	
@@ -125,7 +117,6 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 				{reference !== null &&<span><Route path="/workcrm/persons/:personId" render={
 					props => <EditPerson 
 						match={props.match}
-						personTypes={reference.personType}
 						onSavePerson={entityOperations.updatePerson}
 						onCreateCustomer={entityOperations.insertCustomer}
 						navTo={navigateAfterSave}
@@ -133,7 +124,6 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 				<Route path="/workcrm/persons" render={
 					props => <EditPerson 
 					match={props.match}
-					personTypes={reference.personType}
 					navTo={navigateAfterSave}
 					onSavePerson={entityOperations.insertPerson}
 					/>}

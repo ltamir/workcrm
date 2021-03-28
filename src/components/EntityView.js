@@ -1,6 +1,9 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {getEntity} from '../server/firebase';
 import * as entityOperations from '../server/EntityOperations';
+import {useDispatch, useSelector} from 'react-redux';
+import {startLoading, stopLoading} from '../store/actions' 
+
 import {NavLink, Route, useHistory} from 'react-router-dom'
 import Customer from './customer/Customer.jsx';
 import EditCustomer from './customer/EditCustomer';
@@ -19,68 +22,19 @@ import Spinner from './gui/Spinner';
 
 
 const EntityView = (props) =>{
-	const {match, reference} = props;
+	const {match} = props;
 
-	const [customer, setCustomer] = useState({});
-	const [leadingPerson, setLeadingPerson] = useState(null);
-	const [persons, setPersons] = useState([]);
+	const dispatch = useDispatch();
+	const isLoading = useSelector( state => state.workcrm.isLoading);
+	const reference = useSelector( state => state.workcrm.reference);
+	const customer = useSelector( state => state.workcrm.customers.find( c => c.id === match.params.customerId));
+	const persons = useSelector( state => state.workcrm.persons.filter(p => customer.persons[p.id]));
+	const leadingPerson = useSelector( state => state.workcrm.persons.find(p => customer.leadingPerson === p.id));
+
 	const [isUpdated, setIsUpdated] = useState(false)
 	const [showCustomerEdit, setShowCustomerEdit] = useState(false)
 
-	const [isReady, setIsReady] = useState(false)
-
 	const history = useHistory();
-
-	const fetchPersons = useCallback((token, ids, persons) => {
-		const id = ids.pop()
-		getEntity('persons', token, id)
-		.then(person => {
-			person.id = id;
-			persons.push(person)
-			// console.log(id + " == " + customer.leadingPerson);
-			if(ids.length === 0){
-				setPersons([...persons]);
-				persons.forEach(p => p.id === customer.leadingPerson? setLeadingPerson(prev => {
-					setIsReady(true);	
-					return p
-				}) : null)
-					
-				return;
-			}
-			fetchPersons(token, ids, persons);
-		})
-	}, [customer.leadingPerson])
-
-	useEffect(() => {
-		if(match.params.customerId){
-			setIsReady(false);
-			const theToken = localStorage.getItem('idToken');
-			
-			getEntity('customers', theToken, match.params.customerId)
-			.then(customer => {
-				if(!customer.leadingPerson)
-					alert('missing leading  person ' + customer.title);
-				customer.id = match.params.customerId;
-				if(!customer.works){
-					customer.works = {}
-				}
-				Object.keys(customer.works).forEach( w => customer.works[w].id = w);
-				setCustomer(customer);
-				// console.log("EntityView CTOR", customer);
-				const presons = [];
-				const pArr = [];
-				for(let p in customer.persons){
-					pArr.push(customer.persons[p])
-				}
-				fetchPersons(theToken, pArr, presons);
-			})
-			.catch(err => {
-				console.log(err);
-			})	
-		} 
-	}, [match.params.customerId, isUpdated, fetchPersons])
-
-
 
 	const navigateBack = (entity) =>{
 		if(entity){
@@ -147,10 +101,11 @@ const EntityView = (props) =>{
 		}
 	}
 
+	if(isLoading === true) return <Spinner />;
+	console.log('leadingPerson', leadingPerson);
 	return (
 		<div>
-			{!isReady && ( <Spinner />)}
-			{isReady && <div className="Menu">
+			<div className="Menu">
 				<NavLink to={`/workcrm/customers/${match.params.customerId}`} exact>{customer.title || (leadingPerson && leadingPerson.fullname) || ''}</NavLink>
 				<div className="Menu">
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/persons/0`}>ADD PERSON</NavLink>
@@ -163,15 +118,15 @@ const EntityView = (props) =>{
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/works`} exact>WORKS</NavLink>	
 					<NavLink to={`/workcrm/customers/${match.params.customerId}/payments`}>PAYMENTS</NavLink>	
 				</div>
-			</div>}
-			{isReady && <Customer 
+			</div>
+			<Customer 
 				customer={customer} 
 				navTo={editCustomer} 
-				setShowCustomerEdit={setShowCustomerEdit}/>}
-			{isReady && <Person 
+				setShowCustomerEdit={setShowCustomerEdit}/>
+			<Person 
 				person={leadingPerson} 
 				onDblCLick={editPerson} 
-				personType={reference.personType[leadingPerson.personType]}/>}
+				personType={reference.personType[leadingPerson.personType]}/>
 
 			<TitleField value={" "} />
 
