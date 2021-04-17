@@ -76,18 +76,24 @@ const Login = () =>{
 		}		
 	}, [])
 
+
+
 	useEffect( () => {
 		console.log('in useeffect with ', auth.isAuth);
-		if(auth.isAuth === true){			
+		const idTokenStamp = localStorage.getItem('idTokenStamp');
+		const tokenDate = new Date(idTokenStamp);
+		const now = new Date();
+		
+		if(idTokenStamp && now.getTime() < tokenDate.getTime()){
+			//setIsAuth(true)
+			dispatch(startLoading())
+			dispatch(loadData())
+			setLogoutTime(tokenDate.getTime());
+		}	else if(auth.isAuth === true){			
 			console.log('loading data');
 			dispatch(loadData());
-			// dispatch(loadReference('reference'));
-			// dispatch(loadPersons('persons'));
-			// dispatch(loadCustomers('customers'));
-			// dispatch(stopLoading())
 		}
-	}, [auth, isLoading])
-
+	},[])
 
 	console.log('isAuth isLoading', auth.isAuth, isLoading);
 	if(auth.isAuth === true && isLoading === false){

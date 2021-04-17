@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react';
 // import {getEntity} from '../server/firebase';
 import * as operations from '../../server/EntityOperations';
+import {useDispatch, useSelector} from 'react-redux';
 import Input from '../gui/Input';
 import Select from '../gui/Select';
 import './EditCustomer.css'
 import Button from '../gui/Button';
 
 const EditCustomer = ({customer, customerPersons, navTo, setIsUpdated}) =>{
+	const dispatch = useDispatch();	
+
 	const [title, setTitle] = useState('');
 	const [chargeRate, setChargeRate] = useState(0.00);
 	const [commission, setCommission] = useState(0.00);

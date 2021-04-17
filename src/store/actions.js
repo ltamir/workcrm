@@ -24,6 +24,7 @@ export const login =  (email, password) => {	// returns an action
 			localStorage.setItem('idToken', response.idToken)
 			localStorage.setItem('idTokenStamp', expirationDate.toISOString())
 			dispatch({type: actionTypes.auth.LOGIN, payload: {...response, isAuth: true}})
+			dispatch(loadData())
 		} else{
 			console.log('response.idToken', response);
 			dispatch({type: actionTypes.auth.LOGIN, payload: {...response, isAuth: false}})
@@ -44,9 +45,11 @@ export const loadData = () => {
 		const reference = await entitiesApi('reference', token);
 		dispatch({type: actionTypes.auth.LOAD_REFERENCE, payload: reference})
 		const persons = await entitiesApi('persons', token);
-		dispatch({type: actionTypes.contactActions.LOAD, payload: persons})
+		dispatch({type: actionTypes.personActions.LOAD, payload: persons})
 		const customers = await entitiesApi('customers', token);
 		dispatch({type: actionTypes.customerActions.LOAD, payload: customers})
+		const payments = await entitiesApi('payments', token);
+		dispatch({type: actionTypes.paymentActions.LOAD, payload: payments})		
 		dispatch(stopLoading())
 	}
 }
@@ -67,8 +70,8 @@ export const loadReference = (entity) => {
 export const loadPersons = (entity) => {
 	return async dispatch =>{
 		const token = localStorage.getItem('idToken');
-		const response = await entitiesApi(entity, token);
-		dispatch({type: actionTypes.contactActions.LOAD, payload: response})
+		const persons = await entitiesApi('persons', token);
+		dispatch({type: actionTypes.personActions.LOAD, payload: persons})
 	}
 }
 export const loadCustomers = (entity) => {
@@ -79,19 +82,42 @@ export const loadCustomers = (entity) => {
 	}
 }
 
-export const insertCustomer = async (customer, navTo) => {
+export const insertCustomer =  (customer, person) => {
 	return async dispatch => {
-		const customerId = await saveApi('post', 'customers', customer);
-		await saveApi('PATCH', 'persons/' + customer.persons[0], {customer: customerId})
-		navTo('customer', customerId);
+		const newCustomer = await saveApi('post', 'customers', customer);
+		await saveApi('PATCH', 'persons/' + customer.persons[0], {customer: newCustomer.name})
 
 		console.log('inserted', customer);
 		dispatch({type: actionTypes.customerActions.ADD, payload: customer})
-		if(navTo){
-			navTo()
-		}
+		person.customer = newCustomer.name
+		dispatch({type: actionTypes.personActions.UPDATE, payload: person})
 	}
 
+}
+export const updatePerson =  (person) => {
+	return async dispatch => {
+		await saveApi('PATCH', 'persons/' + person.id, person);
+		console.log('updated', person);
+		dispatch({type: actionTypes.personActions.UPDATE , payload: person})
+	}
+
+}
+
+export const updateLesson = (lesson, customerId, navTo, setIsUpdated, touchUpdatedLessons) => {
+	return async dispatch => {
+		await saveApi('PATCH', `customers/${customerId}/lessons/lesson.id,`, lesson);
+		dispatch({type: actionTypes.workActions.UPDATE , payload: lesson})
+	}
+	// saveData('PATCH', 'customers/' + customerId + '/lessons/' + lesson.id, lesson,
+	// (lessonId) => {
+	// 	saveData('PATCH', 'persons/' + lesson.person + '/lessons', {[lesson.id]: lesson.charge}, () => {
+	// 		setIsUpdated(new Date().getTime());
+	// 		console.log('updated', lesson);
+	// 		navTo('lessons');
+	// 	});
+
+	// 	//updateLessonStatus(lesson.id, customerId, touchUpdatedLessons, false);		
+	// });
 }
 
 // export const store = (cnt) => {	// returns an action

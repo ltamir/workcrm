@@ -114,7 +114,7 @@ const WorkCrm = ({isAuthed, logoutTime}) => {
 					showCustomerHandler={showCustomerHandler}/>}
 			</div>
 			<hr/>
-				{reference !== null &&<span><Route path="/workcrm/persons/:personId" render={
+				{<span><Route path="/workcrm/persons/:personId" render={
 					props => <EditPerson 
 						match={props.match}
 						onSavePerson={entityOperations.updatePerson}

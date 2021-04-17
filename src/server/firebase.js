@@ -43,6 +43,7 @@ export const saveApi = async (method, entity, payload, cb, func) => {
 	});
 
 	const response = await rawResp.json();
+	console.log('saveApi', response);
 
 	return response;
 }

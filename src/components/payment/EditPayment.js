@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {getEntity} from '../../server/firebase'
+import {NavLink, useParams} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
 import Lesson from '../lesson/Lesson';
 import Input from '../gui/Input';
 import Select from '../gui/Select';
@@ -12,7 +14,20 @@ const defaultDate = now[0];
 const time = now[1].split(':');
 const defaultTime = time[0] + ":" + time[1];
 
-const EditPayment = ({match, location, payChannels, persons, onSavePayment, setIsUpdated, navTo}) =>{
+const EditPayment = ({location, onSavePayment, setIsUpdated, navTo}) =>{
+	const params = useParams();
+	const customer = useSelector(state => state.workcrm.customers.find(c => c.id === params.customerId));
+	const customerPersons = [];
+	for(let pid in customer.persons){
+		customerPersons.push(customer.persons[pid]);
+	}
+	const payment = useSelector( state => params.paymentId !== '0' ? state.workcrm.payments.find(p => p.id === params.paymentId) : null);
+	const lesson = customer[payment.lessons];
+	const persons = useSelector(state => state.workcrm.persons.filter(p => customerPersons.includes(p.id)))
+	const payChannels = useSelector(state=> state.workcrm.reference.payChannel)
+
+	console.log('payChannels', persons);
+
 	const [date, setDate] = useState(defaultDate);
 	const [time, setTime] = useState(defaultTime);
 	const [payer, setPayer] = useState('');
@@ -20,10 +35,7 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 	const [amount, setAmount] = useState(0.0);
 	const [recipt, setRecipt] = useState('');
 	const [lessons, setLessons] = useState('');
-	const [customer, setCustomer] = useState(match.params.customerId);
 	const [id, setId] = useState(-1);
-
-	const [lesson, setLesson] = useState(null);
 
 	const setPayment = payment => {
 		setDate(payment.datetime.split(" ")[0])
@@ -33,49 +45,34 @@ const EditPayment = ({match, location, payChannels, persons, onSavePayment, setI
 		setAmount(+(payment.amount));
 		setRecipt(payment.recipt || '');
 		setLessons(payment.lessons);
-		setCustomer(payment.customer);
 		setId(payment.id);
 	}
 
 	useEffect(() => {
 
-		if(match && match.params.paymentId){
-
-			const paymentId = match.params.paymentId;
-			const theToken = localStorage.getItem('idToken');
-			console.log("EditPayment CTOR with id", paymentId);
-			getEntity('payments', theToken, paymentId)
-			.then(payment => {
-				console.log("EditPayment CTOR", payment);
-				payment.id = paymentId;
-				setPayment(payment);
-				if(location.state.lesson.id !== -1){
-					console.log("EditPayment CTOR with locartion", location.state.lesson);
-					setLesson(location.state.lesson)
-				}
-			})
+		if(params.paymentId !== '0'){
+			console.log("EditPayment CTOR with id", params.paymentId, payment);
+			setPayment(payment);
 		} else {
 			const lessonDatetime = location.state.lesson.startDatetime;
 			const payment = {
 				datetime: lessonDatetime, 
-				payer: location.state.lesson.person,
-				lessons: location.state.lesson.id, 
-				amount: +(location.state.lesson.charge),
-				customer: match.params.customerId,
+				payer: lesson.person,
+				lessons: lesson.id, 
+				amount: +(lesson.charge),
 				payChannel: {...payChannels['Bit'], id: 'Bit'}
 			}
 			setPayment(payment)
-			setLesson(location.state.lesson);
 		} 
 		
-	},[match, persons, location, payChannels])
+	},[persons, payChannels])
 
 	const savePayment = event => {
 		event.preventDefault();
 		console.log(lesson);
 		// console.log({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, payChannel, lessons});
 		const workType = lesson.workType && lesson.workType === 'work' ? true : false;
-		onSavePayment({id, datetime: date +  ' ' + time, customer, payer, amount:+amount, recipt, payChannel, lessons}, navTo, setIsUpdated, workType)
+		onSavePayment({id, datetime: date +  ' ' + time, customer:customer.id, payer, amount:+amount, recipt, payChannel, lessons}, navTo, setIsUpdated, workType)
 	}
 
 	

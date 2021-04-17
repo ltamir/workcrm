@@ -2,7 +2,8 @@ export const LOADING_START = 'LOADING/START';
 export const LOADING_STOP = 'LOADING/STOP';
 
 export const auth = {
-  LOGIN: 'LOGIN',
+  LOGIN: 'AUTH/LOGIN',
+  USE_TOKEN: 'AUTH/TOKEN',
   LOAD_REFERENCE: 'LOAD_REFERENCE',
   LOAD_DATA: 'LOAD_DATA',
 }
@@ -13,12 +14,12 @@ export const customerActions = {
   ACTIVATE: 'CUSTOMER/ACTIVATE',
   DEACTIVATE: 'CUSTOMER/DEACTIVATE',
 }
-export const contactActions = {
-  LOAD: 'CONTACT/LOAD',
-  ADD: 'CONTACT/ADD',
-  UPDATE: 'CONTACT/UPDATE',
-  ACTIVATE: 'CONTACT/ACTIVATE',
-  DEACTIVATE: 'CONTACT/DEACTIVATE',
+export const personActions = {
+  LOAD: 'PERSON/LOAD',
+  ADD: 'PERSON/ADD',
+  UPDATE: 'PERSON/UPDATE',
+  ACTIVATE: 'PERSON/ACTIVATE',
+  DEACTIVATE: 'PERSON/DEACTIVATE',
 
 }
 export const workActions = {
@@ -26,6 +27,11 @@ export const workActions = {
   UPDATE: 'WORK/UPDATE',
   DONE: 'WORK/DONE',
   UNDONE: 'WORK/UNDONE'
+}
+export const paymentActions = {
+  LOAD: 'PAYMENT/LOAD',
+  ADD: 'PAYMENT/ADD',
+  UPDATE: 'PAYMENT/UPDATE',
 }
 export const taskActions = {
   ADD: 'TASK/ADD',

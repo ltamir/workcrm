@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {getEntity} from '../../server/firebase'
+import {useDispatch, useSelector} from 'react-redux';
+import{insertCustomer, updatePerson} from '../../store/actions'
 import Input from '../gui/Input';
 import Select from '../gui/Select';
 import Button from '../gui/Button';
@@ -9,9 +11,11 @@ import EditlogEntry from '../log/EditlogEntry';
 import LogEntries from '../log/LogEntries';
 import './EditPerson.css'
 
-// const personTypes = [{id:0, name:'Student'}, {id:1, name:'Sybling'}];
+const EditPerson = ({match, onSavePerson, navTo}) =>{
+	const dispatch = useDispatch();
+	const person = useSelector(store => store.workcrm.persons.find(p => p.id === match.params.personId))
+	const reference = useSelector( state => state.workcrm.reference);
 
-const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo}) =>{
 	const [fullname, setFullname] = useState('');
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
@@ -38,12 +42,7 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 	useEffect(() => {
 		console.log("EditPerson CTOR", match.params);
 		if(match && match.params.personId){
-			const theToken = localStorage.getItem('idToken');
-			getEntity('persons', theToken, match.params.personId)
-			.then(person => {
-				person.id = match.params.personId;
-				setPerson(person);
-			})
+			setPerson(person);
 		} else {
 			let customerId;
 			if(match.params && match.params.customerId)
@@ -54,11 +53,14 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 	}, [match])
 
 	const savePerson = () => {
-		onSavePerson({id, fullname, email, phone, isActive, personType: +type, notes, customer}, navTo);
+		dispatch(updatePerson({id, fullname, email, phone, isActive, personType: +type, notes, customer}))
+		//onSavePerson({id, fullname, email, phone, isActive, personType: +type, notes, customer}, navTo);
 	}
 
 	const createCustomer = () => {
-		onCreateCustomer({title: fullname, profit: 0.0, balance: 0.0, isActive: true, persons:[id], leadingPerson:id}, navTo)
+		const person = {id, fullname, email, phone, isActive, personType: +type, notes, customer};
+		dispatch(insertCustomer({title: fullname, profit: 0.0, balance: 0.0, isActive: true, persons:[id], leadingPerson:id}, person))
+		
 	}
 
 	return(
@@ -91,7 +93,7 @@ const EditPerson = ({match, onSavePerson, personTypes, onCreateCustomer, navTo})
 					onChange={e => setIsActive(e.target.checked)}/>						
 				<Select 
 					label="Type"
-					optionsArr={personTypes.map(pt => {return{id: pt.id, name: pt.name}}) }
+					optionsArr={reference.personType.map(pt => {return{id: pt.id, name: pt.name}}) }
 					value={type} 
 					onChange={e => setType(e.target.value)} />
 					<Button label="SAVE" onClick={savePerson}/>

@@ -28,7 +28,13 @@ const EntityView = (props) =>{
 	const isLoading = useSelector( state => state.workcrm.isLoading);
 	const reference = useSelector( state => state.workcrm.reference);
 	const customer = useSelector( state => state.workcrm.customers.find( c => c.id === match.params.customerId));
-	const persons = useSelector( state => state.workcrm.persons.filter(p => customer.persons[p.id]));
+	const persons = useSelector( state => state.workcrm.persons.filter(p => {
+		if(!customer.id){
+			console.log(customer);
+			return false;
+		}
+		return p.customer === customer.id
+	}));
 	const leadingPerson = useSelector( state => state.workcrm.persons.find(p => customer.leadingPerson === p.id));
 
 	const [isUpdated, setIsUpdated] = useState(false)
@@ -90,19 +96,18 @@ const EntityView = (props) =>{
 				}
 			}			
 			history.push({
-				pathname: `/workcrm/customers/${match.params.customerId}/payments/${paymentId}`,
+				pathname: `workcrm/customers/${match.params.customerId}/payments/${paymentId}`,
 				state: {lesson: lesson}
 			})			
 		} else {
 			history.push({
-				pathname: `/workcrm/customers/${match.params.customerId}/payments/`,
+				pathname: `workcrm/customers/${match.params.customerId}/payments/`,
 				state: {lesson: lesson}
 			})
 		}
 	}
 
 	if(isLoading === true) return <Spinner />;
-	console.log('leadingPerson', leadingPerson);
 	return (
 		<div>
 			<div className="Menu">
@@ -133,7 +138,7 @@ const EntityView = (props) =>{
 			<Route path="/workcrm/customers/:customerId/persons" exact render={
 				() => <Persons persons={persons.filter(p => p.id !== customer.leadingPerson )} personTypes={reference.personType} editHandler={editPerson}/>
 			}/>
-				
+
 			<Route path="/workcrm/customers/:customerId/lessons" exact render={
 				() => <Lessons lessons={customer.lessons || {}} editLesson={editLesson} doubleClickHandler={editLesson} navToPayment={editPayment}/>	
 			}/>
@@ -146,32 +151,27 @@ const EntityView = (props) =>{
 				() => <Payments paymentIds={customer.payments} persons={persons} editPayment={editPayment} navToPayment={editPayment}/>
 			}/>
 				
-			<Route path="/workcrm/customers/:customerId/lessons/0" render={
+			{/* <Route path="/workcrm/customers/:customerId/lessons/0" render={
 				props => <EditLesson 
 					match={props.match}
 					navTo={navigateBack}
 					location={props.location}
-					customerId={customer.id}
 					persons={persons}
-					subjectsList={reference.subjects}
-					workTypeList={reference.workType}
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={insertLessonHandler}
-					/>} exact/>	
-			<Route path="/workcrm/customers/:customerId/lessons/:lessonId" render={
-				props => props.match.params.lessonId !== '0' && <EditLesson 
+					/>} exact/>	 */}
+				<Route path="/workcrm/customers/:customerId/lessons/:lessonId" exact render={
+				props => <EditLesson 
 					match={props.match}
 					location={props.location}
 					navTo={navigateBack}
 					persons={persons}
-					subjectsList={reference.subjects}
-					workTypeList={reference.workType}
 					paymentIds={customer.payments}
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={updateLessonHandler}
 					/>} exact/>	
-			<Route path="/workcrm/customers/:customerId/works/:workId" render={
+			<Route path="workcrm/customers/:customerId/works/:workId" render={
 				props => <EditWork 
 					match={props.match}
 					customer={customer.id}
@@ -184,7 +184,7 @@ const EntityView = (props) =>{
 					setIsUpdated={setIsUpdated}
 					onSaveLesson={{c: insertWorkHandler, u: updateWorkHandler}}
 					/>} exact/>	
-				<Route path="/workcrm/customers/:customerId/persons/0" exact render={
+				<Route path="workcrm/customers/:customerId/persons/0" exact render={
 					props => <EditPerson 
 						match={props.match}
 						navTo={navigateBack}
@@ -216,7 +216,7 @@ const EntityView = (props) =>{
 						/>
 					} 
 				/>
-				<Route path="/workcrm/customers/:customerId/payments/" exact render={
+				<Route path="workcrm/customers/:customerId/payments/" exact render={
 					props => props.location.state && <EditPayment 
 						match={props.match}
 						location={props.location}
@@ -229,7 +229,7 @@ const EntityView = (props) =>{
 					} 
 				/>
 		
-				{showCustomerEdit && <Route path="/workcrm/customers/:customerId" render={
+				{showCustomerEdit && <Route path="workcrm/customers/:customerId" render={
 					props => <EditCustomer 
 						setIsUpdated={setIsUpdated}
 						customerPersons={persons}
