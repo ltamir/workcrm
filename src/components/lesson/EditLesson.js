@@ -10,22 +10,23 @@ import Button from '../gui/Button';
 import Spinner from '../gui/Spinner';
 import './EditLesson.css'
 
-
-
 const EditLesson = (props) =>{
 	const {match, location, persons, paymentIds, onSaveLesson, setIsUpdated, navTo} = props;
 	const dispatch = useDispatch()
 	const params = useParams();
-	console.log(params)
+	
 	const subjectsList = useSelector( state => state.workcrm.reference.subjects)
 	const workTypeList = useSelector( state => state.workcrm.reference.workType)
 	const lesson = useSelector( state => {
 		const customer = state.workcrm.customers.find(c => c.id && c.id === params.customerId);
 		return customer.lessons[params.lessonId];
 	})
+	const customer = useSelector(state => state.workcrm.customers.find(c => c.id === params.customerId))
 	const paymentObj = useSelector(state => params.lessonId !== '0' ? state.workcrm.payments.find( p => p.id === lesson.payment): null)
 	console.log(lesson);
 	console.log('paymentObj', paymentObj);
+	const customerPayments = useSelector( state => state.workcrm.payments.filter( p => customer.payments[p.id] !== undefined))
+	console.log('customerPayments', customerPayments);
 
 	const [title, SetTitle] = useState('');
 	const [startDate, setStartDate] = useState('');
@@ -58,46 +59,6 @@ const EditLesson = (props) =>{
 		setWorkType(lesson.workType || 'lesson')
 		setId(lesson.id);
 	}
-
-	// **** retrieve payments:
-	const fetchPayments = (theToken, keys, paymentsArr) => {
-		getEntity('payments', theToken, keys[0])
-		.then(payment => {
-			const p = {};
-			p.id = keys[0];
-			p.name = `${payment.datetime} ${payment.amount}`
-			paymentsArr.push(p)
-			keys.shift();
-			if(keys.length === 0){
-				paymentsArr.sort( (a, b) => a.datetime < b.datetime ? 1 : -1)
-				setPayments([{id: -1, name: 'Select payment'}, ...paymentsArr]);
-				setPayment(-2)
-				setIsLoading(false);
-				return;
-			}
-			fetchPayments(theToken, keys, paymentsArr);
-		})
-	}
-
-	const buildPayments = () => {
-		console.log(payment)
-		if(payment !== -1){
-			return
-		}
-
-		if(paymentIds){
-			setIsLoading(true)
-			const theToken = localStorage.getItem('idToken');
-			const keys = [];
-			const paymentsArr = [];
-			for(let p in paymentIds){
-				keys.push(p)
-			}
-			
-			fetchPayments(theToken, keys, paymentsArr)	
-		} 
-}
-
 
 	useEffect(() => {
 		const theToken = localStorage.getItem('idToken');
@@ -184,9 +145,9 @@ const EditLesson = (props) =>{
 					!isLoading && <Select 
 						label="Set payment" 
 						value={payment} 
-						onClick={buildPayments}
+						//onClick={buildPayments}
 						onChange={e => setPayment(e.target.value)}
-						optionsArr={payments.map(p => { return {id: p.id, name: p.name}})}/>}							
+						optionsArr={customerPayments.map(p => { return {id: p.id, name: `${p.datetime} ${p.amount}`}})}/>}							
 				</div>
 				<div className="EditLessonRow" style={{justifyContent: 'space-between'}}>
 					
