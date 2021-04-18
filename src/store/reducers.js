@@ -16,6 +16,8 @@ const reducer = (state = initialState, action) => {
 			return {...state, isLoading: true}
 		case actTypes.LOADING_STOP:
 			return {...state, isLoading: false}
+		case(actTypes.auth.USE_TOKEN):
+			return {...state, auth:action.payload}
 		case(actTypes.auth.LOGIN):
 			return {...state, auth:action.payload}
 		case(actTypes.auth.LOAD_DATA):

@@ -13,6 +13,11 @@ export const stopLoading = () => {
 	 
 }
 
+export const authToken = () => {
+	return (dispatch) => {
+		dispatch({type: actionTypes.auth.USE_TOKEN, payload: {isAuth: true}})
+	}
+}
 
 export const login =  (email, password) => {	// returns an action
 	return async (dispatch) =>{

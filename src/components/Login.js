@@ -3,7 +3,7 @@ import WorkCrm from '../containers/WorkCrm';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {loadReference, loadPersons, loadCustomers, loadData, startLoading, stopLoading} from '../store/actions' 
-import {login} from '../store/actions' 
+import {login, authToken} from '../store/actions' 
 import TitleField from './gui/TitleField';
 import Input from './gui/Input';
 import Button from './gui/Button';
@@ -85,13 +85,13 @@ const Login = () =>{
 		const now = new Date();
 		
 		if(idTokenStamp && now.getTime() < tokenDate.getTime()){
-			//setIsAuth(true)
+			dispatch(authToken())
 			dispatch(startLoading())
 			dispatch(loadData())
 			setLogoutTime(tokenDate.getTime());
-		}	else if(auth.isAuth === true){			
-			console.log('loading data');
-			dispatch(loadData());
+		}	else {			
+			console.log('token not valid');
+
 		}
 	},[])
 
