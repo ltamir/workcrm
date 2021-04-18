@@ -16,9 +16,9 @@ const rootReducer = combineReducers( {
 const middlewareLogger = store => {
   return next =>{
    return action => {
-     console.log('middlewareLogger before nxt', action);
+    //  console.log('middlewareLogger before nxt', action);
      const result = next(action);
-     console.log('middlewareLogger after nxt', store.getState());
+    //  console.log('middlewareLogger after nxt', store.getState());
      return result;
    }
   }
